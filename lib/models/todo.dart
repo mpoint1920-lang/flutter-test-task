@@ -1,7 +1,7 @@
 class Todo {
   final int id;
   final String title;
-  final bool completed;
+  bool completed;
 
   Todo({
     required this.id,
@@ -11,26 +11,9 @@ class Todo {
 
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      completed: json['completed'] as bool,
+      id: json['id'],
+      title: json['title'],
+      completed: json['completed'],
     );
   }
-
-  Todo copyWith({
-    int? id,
-    String? title,
-    bool? completed,
-  }) {
-    return Todo(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      completed: completed ?? this.completed,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'Todo(id: $id, title: $title, completed: $completed)';
-  }
-} 
+}

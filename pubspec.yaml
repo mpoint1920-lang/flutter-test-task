@@ -1,4 +1,5 @@
-name: todo_test_task
+name: flutter_test_task
+
 description: A Flutter test task for candidates to complete missing functionality.
 
 publish_to: "none"
