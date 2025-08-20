@@ -12,27 +12,41 @@ class TodoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // TODO: Call loadTodos() when the controller is initialized
+    loadTodos();
   }
 
-  // TODO: Implement this function to load todos from the API
-  // 1. Set isLoading to true
-  // 2. Clear any previous error messages
-  // 3. Call _apiService.fetchTodos()
-  // 4. Update the todos list with the fetched data
-  // 5. Handle any errors and set errorMessage
-  // 6. Set isLoading to false when done
   Future<void> loadTodos() async {
-    // TODO: Add implementation here
+    // Set isLoading to true
+    isLoading.value = true;
+    // Clear any previous error messages
+    errorMessage.value = '';
+    // Call _apiService.fetchTodos()
+    try {
+      todos.value = await _apiService.fetchTodos();
+    } catch (e) {
+      // Handle any errors and set errorMessage
+      errorMessage.value = e.toString();
+    } finally {
+      // Set isLoading to false when done
+      isLoading.value = false;
+    }
   }
 
-  // TODO: Implement this function to toggle the completion status of a todo
-  // 1. Find the todo with the given id in the todos list
-  // 2. Create a new Todo object with the opposite completed status
-  // 3. Update the todo in the list
-  // 4. Use the copyWith method to create the updated todo
+ 
   void toggleTodoCompletion(int id) {
-    // TODO: Add implementation here
+    // Find the todo with the given id in the todos list
+    final int index = todos.indexWhere((todo) => todo.id == id);
+    if (index == -1) {
+      return;
+    }
+    // Create a new Todo object with the opposite completed status
+    final Todo currentTodo = todos[index];
+    // Update the todo in the list
+    final Todo updatedTodo = currentTodo.copyWith(
+      completed: !currentTodo.completed,
+    );
+    // Use the copyWith method to create the updated todo
+    todos[index] = updatedTodo;
   }
 
   void clearError() {

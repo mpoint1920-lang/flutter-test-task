@@ -12,8 +12,11 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Todo Test Task'),
+        centerTitle: true,
+        title: const Text(
+          'To-Do List',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -42,7 +45,7 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     controller.clearError();
-                    // TODO: Call loadTodos() to retry loading data
+                    controller.loadTodos();
                   },
                   child: const Text('Retry'),
                 ),
@@ -51,15 +54,9 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        // TODO: Replace this static placeholder list with real data from controller
-        // Use controller.todos instead of the static list below
-        final List<Todo> placeholderTodos = [
-          Todo(id: 1, title: 'Learn Flutter', completed: false),
-          Todo(id: 2, title: 'Complete this test task', completed: true),
-          Todo(id: 3, title: 'Build amazing apps', completed: false),
-        ];
+        final List<Todo> todos = controller.todos;
 
-        if (placeholderTodos.isEmpty) {
+        if (todos.isEmpty) {
           return const Center(
             child: Text(
               'No todos found',
@@ -68,39 +65,41 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: placeholderTodos.length,
-          itemBuilder: (context, index) {
-            final todo = placeholderTodos[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
+        return RefreshIndicator(
+          onRefresh: () => controller.loadTodos(),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: todos.length,
+            separatorBuilder: (context, index) => const Divider(height: 1, indent: 72),
+            itemBuilder: (context, index) {
+              final todo = todos[index];
+              return ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                leading: Checkbox(
+                  checkColor: Colors.white,
+                  activeColor: Colors.blue,
+                  value: todo.completed,
+                  onChanged: (bool? value) {
+                    controller.toggleTodoCompletion(todo.id);
+                  },
+                ),
                 title: Text(
                   todo.title,
                   style: TextStyle(
-                    decoration: todo.completed 
-                        ? TextDecoration.lineThrough 
-                        : null,
-                    color: todo.completed 
-                        ? Colors.grey 
-                        : null,
+                    color: todo.completed ? Colors.grey : null,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                trailing: Checkbox(
-                  value: todo.completed,
-                  onChanged: (bool? value) {
-                    // TODO: Call controller.toggleTodoCompletion(todo.id) here
-                  },
-                ),
-              ),
-            );
-          },
+                onTap: () => controller.toggleTodoCompletion(todo.id),
+              );
+            },
+          ),
         );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Call controller.loadTodos() to refresh the data
+          controller.loadTodos();
         },
         tooltip: 'Refresh',
         child: const Icon(Icons.refresh),
