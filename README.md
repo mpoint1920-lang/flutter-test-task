@@ -14,7 +14,7 @@ Fetch and display a list of todos from the [JSONPlaceholder API](https://jsonpla
 
 - **API Integration**: Fetch todos from JSONPlaceholder API
 - **State Management**: Use GetX for controller and state management
-- **UI Logic**: Connect existing UI components to real data
+- **UI Logic**: Connect existing UI components to real Data
 - **Refresh Functionality**: Reload data using floating action button
 - **Error Handling**: Show loading states and error messages
 
