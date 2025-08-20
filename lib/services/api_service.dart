@@ -5,18 +5,22 @@ import '../models/todo.dart';
 class ApiService {
   static const String baseUrl = 'https://jsonplaceholder.typicode.com';
 
-  // TODO: Implement this function to fetch todos from the API
-  // Use the endpoint: https://jsonplaceholder.typicode.com/todos
-  // Parse the JSON response and return a List<Todo>
-  // Handle any potential errors and throw appropriate exceptions
   Future<List<Todo>> fetchTodos() async {
-    // TODO: Add implementation here
-    // 1. Make HTTP GET request to $baseUrl/todos
-    // 2. Parse the JSON response
-    // 3. Convert each JSON object to Todo using Todo.fromJson
-    // 4. Return the list of todos
-    // 5. Handle errors appropriately
-    
-    throw UnimplementedError('fetchTodos() method needs to be implemented');
+    // Make HTTP GET request to $baseUrl/todos
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    final response = await http.get(Uri.parse('$baseUrl/todos'), headers: headers);
+    // print(response.body);
+
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      final List<dynamic> jsonResponse = json.decode(response.body);
+      // Convert each JSON object to Todo using Todo.fromJson
+      return jsonResponse.map((json) => Todo.fromJson(json)).toList();
+    } else {
+      // Handle errors appropriately
+      throw Exception('Failed to load todos');
+    }
   }
 } 
