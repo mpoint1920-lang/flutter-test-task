@@ -61,8 +61,10 @@ lib/
 ## Submission
 
 1. Complete the implementation
-2. Create a pull request with your name in the format: **"First Last - Todo Test Task"**
-3. Ensure the app loads todos, allows completion toggling, and handles refresh/errors
+2. Take a screenshot of your working app
+3. Create a pull request with your name in the format: **"First Last - Todo Test Task"**
+4. Include the screenshot in your PR description
+5. Ensure the app loads todos, allows completion toggling, and handles refresh/errors
 
 ## Dependencies
 
