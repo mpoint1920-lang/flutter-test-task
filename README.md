@@ -2,96 +2,55 @@
 
 A Flutter test task for candidates to demonstrate their skills in API integration, state management, and UI implementation.
 
-## Task Description
+## Task Overview
 
-This Flutter project is designed to fetch and display a list of todos from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/todos). The project compiles and runs but has several incomplete parts that need to be implemented.
+Fetch and display a list of todos from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/todos). The project compiles and runs but has incomplete parts that need implementation.
 
 ## Sample UI
 
 ![Sample UI](assets/sample_ui.png)
 
-**Expected UI Layout:**
-
-- App bar with title "Todo Test Task"
-- List of todo items with:
-  - Todo title (with strikethrough if completed)
-  - Checkbox on the right side to toggle completion
-- Floating action button (refresh icon) in bottom right
-- Loading indicator when fetching data
-- Error message with retry button if API fails
-
 ## Features to Implement
 
-- **API Integration**: Fetch todos from the JSONPlaceholder API
+- **API Integration**: Fetch todos from JSONPlaceholder API
 - **State Management**: Use GetX for controller and state management
-- **UI Logic**: Connect the existing UI components to real data and functionality
-- **Refresh Functionality**: Reload data using the floating action button
-- **Error Handling**: Show appropriate error messages and loading states
-
-**Note**: The UI design and layout are already implemented. Focus your efforts on implementing the business logic and data flow.
+- **UI Logic**: Connect existing UI components to real data
+- **Refresh Functionality**: Reload data using floating action button
+- **Error Handling**: Show loading states and error messages
 
 ## Project Structure
 
 ```
 lib/
  ├─ main.dart                 # App entry point
- ├─ models/
- │   └─ todo.dart            # Todo data model
- ├─ services/
- │   └─ api_service.dart     # API service (incomplete)
- ├─ controllers/
- │   └─ todo_controller.dart # GetX controller (incomplete)
- └─ views/
-     └─ home_page.dart       # Main UI (incomplete)
+ ├─ models/todo.dart          # Todo data model
+ ├─ services/api_service.dart # API service (incomplete)
+ ├─ controllers/todo_controller.dart # GetX controller (incomplete)
+ └─ views/home_page.dart      # Main UI (incomplete)
 ```
 
-## Dependencies
+## Setup
 
-- `get: ^4.6.5` - State management
-- `http: ^1.1.0` - HTTP requests
+1. Install dependencies: `flutter pub get`
+2. Run the project: `flutter run`
 
-## Setup Instructions
-
-1. **Clone or download the project**
-2. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
-3. **Run the project:**
-   ```bash
-   flutter run
-   ```
-
-## TODO Items to Complete
+## TODO Items
 
 ### 1. API Service (`lib/services/api_service.dart`)
 
-- **Implement `fetchTodos()` method**
-  - Make HTTP GET request to `https://jsonplaceholder.typicode.com/todos`
-  - Parse JSON response and convert to `List<Todo>`
-  - Handle errors appropriately
+- Implement `fetchTodos()` method to fetch from `https://jsonplaceholder.typicode.com/todos`
 
 ### 2. Todo Controller (`lib/controllers/todo_controller.dart`)
 
-- **Complete `loadTodos()` method**
-  - Set loading state
-  - Call API service
-  - Update todos list
-  - Handle errors
-  - Clear loading state
-- **Implement `toggleTodoCompletion(int id)` method**
-  - Find todo by ID
-  - Toggle completion status
-  - Update the todo in the list
-- **Initialize data loading** in `onInit()`
+- Complete `loadTodos()` method with loading states and error handling
+- Implement `toggleTodoCompletion(int id)` method
+- Initialize data loading in `onInit()`
 
 ### 3. UI (`lib/views/home_page.dart`)
 
-- **Replace static placeholder data** with real data from controller
-- **Implement refresh button** functionality
-- **Connect checkbox onChanged** to toggle completion
-- **Implement retry button** in error state
-- **Note**: The UI structure is already provided - focus on connecting the logic, not redesigning the interface
+- Replace static data with real data from controller
+- Connect checkbox functionality
+- Implement refresh and retry buttons
 
 ## API Endpoint
 
@@ -99,30 +58,15 @@ lib/
 - **Method**: GET
 - **Response**: Array of todo objects with `id`, `title`, and `completed` fields
 
-## Expected Behavior
+## Submission
 
-1. App should load and display a list of todos from the API
-2. Each todo should show its title and completion status
-3. Checkboxes should toggle the completion status
-4. Refresh button should reload data from the API
-5. Loading indicator should show during API calls
-6. Error messages should display if API calls fail
-7. Retry functionality should work in error states
+1. Complete the implementation
+2. Create a pull request with your name in the format: **"First Last - Todo Test Task"**
+3. Ensure the app loads todos, allows completion toggling, and handles refresh/errors
 
-## Evaluation Criteria
+## Dependencies
 
-- **Code Quality**: Clean, readable, and well-structured code
-- **Error Handling**: Proper error handling and user feedback
-- **State Management**: Correct use of GetX patterns
-- **UI/UX**: Responsive and user-friendly interface
-- **API Integration**: Proper HTTP requests and data parsing
-
-## Tips
-
-- Use the `Todo.fromJson()` factory method to parse API responses
-- Leverage GetX reactive variables (`RxList`, `RxBool`, `RxString`)
-- Handle both success and error cases in API calls
-- Test the app with different network conditions
+- `get: ^4.6.5` - State management
+- `http: ^1.1.0` - HTTP requests
 
 Good luck! 🚀
-# flutter-test-task
