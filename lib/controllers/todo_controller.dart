@@ -82,7 +82,9 @@ class TodoController extends GetxController {
 
   Future<void> toggleTodoCompletion(int todoId) async {
     _updateTodoById(
-        todoId, (todo) => todo.copyWith(completed: !todo.completed));
+      todoId,
+      (todo) => todo.copyWith(completed: !todo.completed),
+    );
   }
 
   Future<void> archiveTodo(int todoId) async {
@@ -220,6 +222,9 @@ class TodoController extends GetxController {
       _persistAllData();
       final pagedIndex = todos.indexWhere((t) => t.id == todoId);
       if (pagedIndex != -1) {
+        if (!todos[pagedIndex].completed) {
+          ExternalHelpers.playSound(SoundType.completed);
+        }
         todos[pagedIndex] = _allTodos[index];
       }
     }

@@ -84,8 +84,9 @@ class TodoCard extends StatelessWidget {
           : null,
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
-        dismissible:
-            DismissiblePane(onDismissed: () => handleDeleteOrArchive(false)),
+        dismissible: DismissiblePane(
+          onDismissed: () => handleDeleteOrArchive(false),
+        ),
         children: [
           SlidableAction(
             onPressed: (_) => handleDeleteOrArchive(false),
