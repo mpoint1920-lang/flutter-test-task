@@ -117,8 +117,8 @@ class HomePage extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(
-                  
-                  todo.title,
+                  formatTitle(
+                  todo.title),
                   style: TextStyle(
                     decoration: todo.completed 
                         ? TextDecoration.lineThrough 
@@ -188,3 +188,9 @@ SpeedDialChild(
     );
   }
 } 
+
+
+String formatTitle(String title) {
+  if (title.isEmpty) return "";
+  return title[0].toUpperCase() + title.substring(1).toLowerCase();
+}
