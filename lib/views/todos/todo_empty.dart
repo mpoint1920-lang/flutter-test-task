@@ -5,7 +5,16 @@ import 'package:todo_test_task/theme/color_palettes.dart';
 class TodoEmpty extends StatelessWidget {
   const TodoEmpty({
     super.key,
+    required this.title,
+    this.icon,
+    this.iconPath,
+    this.description = '',
   });
+
+  final Widget? icon;
+  final String? iconPath;
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -15,15 +24,16 @@ class TodoEmpty extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              'assets/no_tasks.svg',
-              width: 240,
-              height: 240,
-              color: ColorPalettes.disabledColor,
-            ),
+            icon ??
+                SvgPicture.asset(
+                  iconPath ?? 'assets/no_tasks.svg',
+                  width: 240,
+                  height: 240,
+                  color: ColorPalettes.disabledColor,
+                ),
             const SizedBox(height: 24),
             Text(
-              "You're all caught up!",
+              title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -31,7 +41,7 @@ class TodoEmpty extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "Enjoy the rest of your day.",
+              description ?? '',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.grey[600],
                   ),

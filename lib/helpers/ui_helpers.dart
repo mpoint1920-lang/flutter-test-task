@@ -21,11 +21,13 @@ class AppSnack {
   // -----------------------------
   // Show Success Snackbar
   // -----------------------------
-  static void success(String message, {String title = 'Success'}) {
+  static void success(String message,
+      {String title = 'Success',
+      SnackPosition snackPosition = SnackPosition.BOTTOM}) {
     Get.snackbar(
       title,
       message,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: snackPosition,
       backgroundColor: Colors.green,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),

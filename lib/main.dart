@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:todo_test_task/controllers/bindings.dart';
 import 'package:todo_test_task/theme/theme.dart';
+import 'package:todo_test_task/views/home/archived_page.dart';
 import 'controllers/ui_controller.dart';
 import 'views/home/home_page.dart';
 
@@ -30,6 +31,11 @@ class TodoTestApp extends StatelessWidget {
         GetPage(
           name: '/home',
           page: () => const HomePage(),
+          binding: HomeBinding(),
+        ),
+        GetPage(
+          name: '/archived',
+          page: () => const ArchivedPage(),
           binding: HomeBinding(),
         ),
       ],

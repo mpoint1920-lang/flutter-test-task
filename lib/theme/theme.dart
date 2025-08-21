@@ -28,6 +28,9 @@ final ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.bold,
       color: ColorPalettes.lightOnSurface,
     ),
+    iconTheme: const IconThemeData(
+      color: ColorPalettes.lightOnSurface,
+    ),
     actionsIconTheme: const IconThemeData(
       color: ColorPalettes.lightOnSurface,
     ),

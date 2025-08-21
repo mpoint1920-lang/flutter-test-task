@@ -3,15 +3,23 @@ import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
+typedef RequestInterceptor = FutureOr<void> Function(
+    String method, Uri url, Map<String, String> headers, dynamic body);
+typedef ResponseInterceptor = FutureOr<void> Function(http.Response response);
+
 class ApiService {
   final String baseUrl = 'https://jsonplaceholder.typicode.com';
   final http.Client client;
 
-  // Separate timeouts
+  // Interceptors
+  RequestInterceptor? onRequest;
+  ResponseInterceptor? onResponse;
+
+  //  Timeouts
   final Duration getTimeout = const Duration(seconds: 30);
   final Duration writeTimeout = const Duration(seconds: 10);
 
-  ApiService({required this.client});
+  ApiService({required this.client, this.onRequest, this.onResponse});
 
   // -----------------------------
   // Public Methods
@@ -41,6 +49,11 @@ class ApiService {
       final uri = Uri.parse('$baseUrl/$endpoint');
       final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
 
+      // Call request interceptor
+      if (onRequest != null) {
+        await onRequest!(method, uri, headers, body);
+      }
+
       late http.Response response;
       switch (method) {
         case 'GET':
@@ -62,6 +75,11 @@ class ApiService {
           break;
         default:
           throw ArgumentError('Unsupported HTTP method: $method');
+      }
+
+      // Call response interceptor
+      if (onResponse != null) {
+        await onResponse!(response);
       }
 
       return _handleResponse(response);
