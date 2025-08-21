@@ -7,12 +7,13 @@ import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';
 
-class CollectionsPage extends GetView<TodoController> {
-  const CollectionsPage({super.key});
+class CollectionPage extends GetView<TodoController> {
+  const CollectionPage({super.key, required this.name});
+  final String name;
 
   @override
   Widget build(BuildContext context) {
-    final collectionName = Get.parameters['id'] ?? '';
+    final collectionName = name;
     return Scaffold(
       appBar: AppBar(
         title: Text(collectionName),

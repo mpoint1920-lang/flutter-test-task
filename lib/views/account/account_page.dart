@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
 import 'package:todo_test_task/helpers/ui_helpers.dart';
+import 'package:todo_test_task/routes.dart';
+import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/widgets/widgets.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -57,7 +60,7 @@ class AccountPage extends StatelessWidget {
               leading: const Icon(Icons.archive),
               title: const Text('Archived'),
               onTap: () {
-                Get.toNamed('/archived');
+                Get.toNamed(RouteNames.archived);
               },
               trailing: const Icon(Icons.chevron_right),
             ),
@@ -65,8 +68,12 @@ class AccountPage extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.star_border_purple500),
               title: const Text('Membership'),
+              subtitle: const AppChip(
+                title: 'Free',
+                bgColor: ColorPalettes.disabledColor,
+              ),
               onTap: () {
-                Get.toNamed('/membership');
+                // Open bottomsheet for membership
               },
               trailing: const Icon(Icons.chevron_right),
             ),
@@ -119,7 +126,9 @@ class AccountPage extends StatelessWidget {
                             leading: const Icon(Icons.folder),
                             title: Text(collection),
                             onTap: () {
-                              Get.toNamed('/collections/$collection');
+                              Get.toNamed(
+                                '/collections/${Uri.encodeComponent(collection)}',
+                              );
                             },
                           );
                         },

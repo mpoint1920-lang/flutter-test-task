@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:todo_test_task/controllers/bindings.dart';
+import 'package:todo_test_task/controllers/ui_controller.dart';
 import 'package:todo_test_task/theme/theme.dart';
-import 'package:todo_test_task/views/collections/collection_page.dart';
-import 'package:todo_test_task/views/home/archived_page.dart';
-import 'controllers/ui_controller.dart';
-import 'views/home/home_page.dart';
+import 'routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,24 +24,8 @@ class TodoTestApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: '/home',
-      getPages: [
-        GetPage(
-          name: '/home',
-          page: () => const HomePage(),
-          binding: HomeBinding(),
-        ),
-        GetPage(
-          name: '/archived',
-          page: () => const ArchivedPage(),
-          binding: HomeBinding(),
-        ),
-        GetPage(
-          name: '/collections/:id',
-          page: () => const CollectionsPage(),
-          binding: HomeBinding(),
-        ),
-      ],
+      initialRoute: RouteNames.home,
+      getPages: AppRoutes.pages,
       debugShowCheckedModeBanner: false,
     );
   }
