@@ -1,22 +1,32 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/todo.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ApiService {
-  static const String baseUrl = 'https://jsonplaceholder.typicode.com';
-
-  // TODO: Implement this function to fetch todos from the API
-  // Use the endpoint: https://jsonplaceholder.typicode.com/todos
-  // Parse the JSON response and return a List<Todo>
-  // Handle any potential errors and throw appropriate exceptions
+  final String _baseUrl = 'https://jsonplaceholder.typicode.com/todos';
   Future<List<Todo>> fetchTodos() async {
-    // TODO: Add implementation here
-    // 1. Make HTTP GET request to $baseUrl/todos
-    // 2. Parse the JSON response
-    // 3. Convert each JSON object to Todo using Todo.fromJson
-    // 4. Return the list of todos
-    // 5. Handle errors appropriately
-    
-    throw UnimplementedError('fetchTodos() method needs to be implemented');
+    try {
+      final response = await http.get(
+        Uri.parse(_baseUrl),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          return [];
+        }
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isEmpty) {
+          return [];
+        }
+        return data.map((json) => Todo.fromJson(json)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
   }
-} 
+}
