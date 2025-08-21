@@ -8,9 +8,13 @@ class ErrorPage extends StatelessWidget {
   const ErrorPage({
     required this.errorMessage,
     required this.onRetry,
+    this.iconColor = ColorPalettes.errorColor,
+    this.iconPath,
     Key? key,
   }) : super(key: key);
 
+  final String? iconPath;
+  final Color iconColor;
   final String errorMessage;
   final void Function() onRetry;
 
@@ -23,10 +27,10 @@ class ErrorPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              'assets/error.svg',
+              iconPath ?? 'assets/error.svg',
               width: 124,
               height: 124,
-              color: ColorPalettes.errorColor,
+              color: iconColor,
             ),
             const SizedBox(height: 24),
             Text(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
+import 'package:todo_test_task/theme/color_palettes.dart';
 import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';
@@ -27,6 +28,15 @@ class TodoPage extends GetView<TodoController> {
       body: Obx(() {
         if (controller.isLoading.value && controller.todos.isEmpty) {
           return const TodoShimmer();
+        }
+
+        if (controller.isSocketError.isTrue) {
+          return ErrorPage(
+            iconPath: 'assets/no_internet.svg',
+            errorMessage: "Please Check Your Connection!",
+            iconColor: ColorPalettes.disabledColor,
+            onRetry: controller.loadTodos,
+          );
         }
 
         if (controller.errorMessage.isNotEmpty) {

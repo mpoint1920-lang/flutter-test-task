@@ -13,10 +13,10 @@ class TodoService {
       if (data is List) {
         return data.map((item) => Todo.fromJson(item)).toList();
       } else {
-        throw Exception('SERVER ERROR!');
+        throw Exception('Corrupted Data!');
       }
     } catch (e) {
-      throw Exception('SERVER ERROR!');
+      rethrow;
     }
   }
 }

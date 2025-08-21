@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_test_task/helpers/helpers.dart';
 import 'package:todo_test_task/models/todo.dart';
 import 'package:todo_test_task/services/todo_service.dart';
 
@@ -14,6 +17,7 @@ class TodoController extends GetxController {
   var todos = <Todo>[].obs;
   var isLoading = true.obs;
   var isLoadingMore = false.obs;
+  var isSocketError = false.obs;
   var errorMessage = ''.obs;
 
   final int _pageSize = 20;
@@ -52,9 +56,14 @@ class TodoController extends GetxController {
         todos.clear();
       }
       errorMessage('');
+      isSocketError(false);
       _allTodos = await todoService.fetchTodos();
       _loadPage();
+    } on SocketException {
+      isSocketError(true);
+      AppSnack.error('No Internet connection. Please check your network.');
     } catch (e) {
+      print('Type if error is ${e}');
       errorMessage(e.toString().replaceFirst("Exception: ", ""));
     } finally {
       isLoading(false);
@@ -91,12 +100,6 @@ class TodoController extends GetxController {
     if (index != -1) {
       final todo = todos[index];
       todos[index] = todo.copyWith(completed: !todo.completed);
-      Get.snackbar(
-        'Success',
-        'Task "${todo.title}" updated.',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
     }
   }
 }
