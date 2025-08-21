@@ -43,7 +43,6 @@ class CollectionsPage extends StatelessWidget {
   }
 }
 
-/// --- Add Collection Section ---
 class _AddCollectionButton extends StatelessWidget {
   final AccountController accountCtrl;
   final TodoController todoCtrl;
@@ -57,34 +56,45 @@ class _AddCollectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Obx(
-      () => ElevatedButton.icon(
-        onPressed: (!accountCtrl.isPro &&
-                todoCtrl.collections.length > AppConstants.freeCollectionLimit)
-            ? null
-            : () async {
-                final newCollectionName =
-                    await showAddCollectionDialog(context);
-                if (newCollectionName != null && newCollectionName.isNotEmpty) {
-                  todoCtrl.addCollection(newCollectionName).then(
-                    (_) {
-                      showInfoSnackBar(
-                        context: Get.context!,
-                        message:
-                            'Collection "$newCollectionName" has been added.',
-                      );
-                    },
-                  );
-                }
-              },
-        icon: const Icon(Icons.add),
-        label: const Text('Add Collection'),
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(50),
-          backgroundColor: colorScheme.primary,
-          foregroundColor: Colors.white,
-        ),
-      ),
+      () {
+        final isDisabled = !accountCtrl.isPro &&
+            todoCtrl.collections.length > AppConstants.freeCollectionLimit;
+
+        final button = ElevatedButton.icon(
+          onPressed: isDisabled
+              ? null
+              : () async {
+                  final newCollectionName =
+                      await showAddCollectionDialog(context);
+                  if (newCollectionName != null &&
+                      newCollectionName.isNotEmpty) {
+                    todoCtrl.addCollection(newCollectionName).then(
+                      (_) {
+                        showInfoSnackBar(
+                          context: Get.context!,
+                          message:
+                              'Collection "$newCollectionName" has been added.',
+                        );
+                      },
+                    );
+                  }
+                },
+          icon: const Icon(Icons.add),
+          label: const Text('Add Collection'),
+          style: ElevatedButton.styleFrom(
+            minimumSize:
+                isLandscape ? const Size(200, 45) : const Size.fromHeight(50),
+            backgroundColor: colorScheme.primary,
+            foregroundColor: Colors.white,
+          ),
+        );
+
+        return isLandscape ? Center(child: button) : button;
+      },
     );
   }
 }
