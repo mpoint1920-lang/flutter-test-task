@@ -52,3 +52,16 @@ class AppSnack {
     );
   }
 }
+
+String getFriendlyDate(DateTime date) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final target = DateTime(date.year, date.month, date.day);
+
+  final difference = target.difference(today).inDays;
+
+  if (difference == 0) return 'Today';
+  if (difference == -1) return 'Yesterday';
+  if (difference == 1) return 'Tomorrow';
+  return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}

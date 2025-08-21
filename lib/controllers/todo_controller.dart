@@ -262,4 +262,13 @@ class TodoController extends GetxController {
     // cache for persistency //
     await storageService.saveTodos(key: _keyTodosKey, todos: _allTodos);
   }
+
+  Future<void> updateTodo(Todo updatedTodo) async {
+    final index = todos.indexWhere((e) => e.id == updatedTodo.id);
+    if (index == -1) return;
+    todos[index] = updatedTodo;
+    _allTodos[index] = todos[index];
+    // cache for persistency //
+    await storageService.saveTodos(key: _keyTodosKey, todos: _allTodos);
+  }
 }
