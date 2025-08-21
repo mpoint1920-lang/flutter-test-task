@@ -259,11 +259,13 @@ Future<void> editTodoDialog(BuildContext context, Todo todo) async {
   final TodoController controller = Get.find<TodoController>();
   final TextEditingController titleController =
       TextEditingController(text: todo.title);
+  final theme = Theme.of(context);
 
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.green.shade50,
+    backgroundColor:
+        theme.bottomSheetTheme.backgroundColor ?? theme.colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -279,6 +281,7 @@ Future<void> editTodoDialog(BuildContext context, Todo todo) async {
           controller: titleController,
           autofocus: true,
           textInputAction: TextInputAction.done,
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color),
           onSubmitted: (value) {
             controller.updateTodo(
               todo.copyWith(title: value.trim()),
@@ -286,11 +289,13 @@ Future<void> editTodoDialog(BuildContext context, Todo todo) async {
             Navigator.pop(context);
           },
           decoration: InputDecoration(
-            hintText: 'Edit title...',
+            hintText: 'edit_title'.tr,
+            hintStyle: TextStyle(color: theme.hintColor),
             filled: true,
-            fillColor: Colors.grey.shade200, // greyish background
+            fillColor: theme.inputDecorationTheme.fillColor ??
+                theme.colorScheme.surfaceVariant.withOpacity(0.1),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.check_circle, color: Colors.green),
+              icon: Icon(Icons.check_circle, color: theme.colorScheme.primary),
               onPressed: () {
                 controller.updateTodo(
                   todo.copyWith(title: titleController.text.trim()),

@@ -100,7 +100,6 @@ class TodoCard extends StatelessWidget {
                       onChanged: (_) => controller.toggleTodoCompletion(
                           todo.id, todo.completed),
                       shape: const CircleBorder(),
-                      activeColor: theme.textTheme.titleLarge?.color,
                     ),
                   ),
             title: Text(

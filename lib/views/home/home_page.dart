@@ -36,8 +36,8 @@ class HomePage extends GetView<UiController> {
             ),
             NavigationDestination(
               icon: Icon(Icons.account_circle_outlined),
-              selectedIcon: Icon(Icons.account_circle),
-              label: 'Account',
+              selectedIcon: Icon(Icons.menu),
+              label: 'More',
             ),
           ],
           selectedIndex: controller.currentPage.value,

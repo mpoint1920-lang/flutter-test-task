@@ -210,4 +210,18 @@ final ThemeData darkTheme = ThemeData(
       ),
     ),
   ),
+  checkboxTheme: CheckboxThemeData(
+    fillColor: MaterialStateProperty.resolveWith((states) {
+      if (states.contains(MaterialState.disabled)) {
+        return Colors.grey.shade700;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return ColorPalettes.darkPrimary;
+      }
+      return Colors.grey.shade600;
+    }),
+    checkColor: MaterialStateProperty.all(ColorPalettes.darkOnPrimary),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    splashRadius: 20,
+  ),
 );
