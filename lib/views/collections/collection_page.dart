@@ -46,7 +46,7 @@ class CollectionsPage extends GetView<TodoController> {
         ],
       ),
       body: Obx(() {
-        final todos = controller.toDosInCollection(collectionName);
+        final todos = controller.todosForCollection(collectionName);
 
         if (controller.isLoading.value && todos.isEmpty) {
           return const TodoShimmer();

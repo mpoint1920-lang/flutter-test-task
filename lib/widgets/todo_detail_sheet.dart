@@ -347,7 +347,7 @@ class _CollectionPickerSheet extends StatelessWidget {
                           if (todo.collectionName != c) {
                             controller.updateCollection(todo.id, c);
                           } else {
-                            controller.removeTodoFromCollection(todo.id);
+                            controller.updateCollection(todo.id, '');
                           }
                           Navigator.pop(context);
                         },

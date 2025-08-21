@@ -11,114 +11,226 @@ import 'package:todo_test_task/services/todo_service.dart';
 
 class TodoController extends GetxController {
   final TodoService todoService;
-  final ScrollController scrollController = ScrollController();
   final StorageService storageService;
+  final ScrollController scrollController = ScrollController();
 
+  // --- Private State ---
   final String _keyTodos = 'todos';
   final String _keyArchivedTodos = 'archived_todos';
   final String _keyCollections = 'collections';
 
-  TodoController({required this.todoService, required this.storageService});
+  final RxList<Todo> _allTodos = <Todo>[].obs;
+  final RxList<Todo> archived = <Todo>[].obs;
+  final RxList<String> collections = <String>[].obs;
 
-  var _allTodos = <Todo>[].obs;
-  List<Todo> toDosInCollection(String collectionName) =>
-      _allTodos.where((t) => t.collectionName == collectionName).toList();
-  var archived = <Todo>[].obs;
-
-  var todos = <Todo>[].obs;
-  RxList<String> collections = <String>[].obs;
-
-  var isLoading = true.obs;
-  var isLoadingMore = false.obs;
-  var isSocketError = false.obs;
-  var errorMessage = ''.obs;
+  final List<Todo> _deletedTodos = [];
+  final Map<int, Timer> _deleteTimers = {};
 
   final int _pageSize = 20;
   int _currentPage = 1;
   bool _hasMore = true;
 
+  // --- Public State ---
+  final RxList<Todo> todos = <Todo>[].obs;
+  final RxBool isLoading = true.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxBool isSocketError = false.obs;
+
+  TodoController({required this.todoService, required this.storageService});
+
+  // --- Lifecycle Methods ---
   @override
   void onInit() {
     super.onInit();
-    archived.value = storageService.getTodos(key: _keyArchivedTodos);
-    collections.value = storageService.getLists(key: _keyCollections);
-
+    _loadInitialDataFromCache();
     loadTodos();
-    scrollController.addListener(_scrollListener);
+    scrollController.addListener(_onScroll);
   }
 
   @override
   void onClose() {
-    scrollController.removeListener(_scrollListener);
+    scrollController.removeListener(_onScroll);
     scrollController.dispose();
+    _deleteTimers.forEach((_, timer) => timer.cancel());
     super.onClose();
   }
 
-  void _scrollListener() {
-    if (scrollController.position.pixels ==
-            scrollController.position.maxScrollExtent &&
-        _hasMore &&
-        !isLoadingMore.value) {
-      loadMoreTodos();
-    }
+  // --- Public API ---
+  List<Todo> todosForCollection(String collectionName) {
+    return _allTodos
+        .where((todo) => todo.collectionName == collectionName)
+        .toList();
   }
 
   Future<void> loadTodos(
       {bool isRefresh = false, bool notifySync = false}) async {
-    if (isRefresh) {
-      isLoading(true);
-    }
-
-    // Load from cache first for instant UI
-    final cachedTodos = storageService.getTodos(key: _keyTodos);
-    if (!isRefresh) {
-      if (cachedTodos.isNotEmpty) {
-        _allTodos.value = cachedTodos;
-        _resetAndLoadFirstPage();
-        isLoading(false);
-      }
-    }
-
+    if (isRefresh) isLoading(true);
     try {
       errorMessage('');
       isSocketError(false);
       final fetchedTodos = await todoService.fetchTodos();
-      _allTodos.value = fetchedTodos;
-      _allTodos.value = _allTodos
-          .where((todo) => archived.indexWhere((a) => a.id == todo.id) == -1)
-          .toList();
-
-      if (cachedTodos.isEmpty) {
-        await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-      } else {
-        _allTodos.value = _allTodos.map((e) {
-          final index = cachedTodos.indexWhere((a) => a.id == e.id);
-
-          return index == -1
-              ? e
-              : e.copyWith(
-                  // id: cachedTodos[index].id,
-                  // title: cachedTodos[index].title,
-                  completed: cachedTodos[index].completed,
-                  deadline: cachedTodos[index].deadline,
-                  priority: cachedTodos[index].priority,
-                  collectionName: cachedTodos[index].collectionName,
-                  archivedDate: cachedTodos[index].archivedDate,
-                );
-        }).toList();
-      }
-      if (notifySync) {
-        AppSnack.success('Synced.', snackPosition: SnackPosition.TOP);
-      }
-      _resetAndLoadFirstPage();
+      _syncWithFetchedData(fetchedTodos, notifySync);
     } on SocketException {
       isSocketError(true);
-      AppSnack.error('No Internet connection. Please check your network.');
     } catch (e) {
       errorMessage(e.toString().replaceFirst("Exception: ", ""));
     } finally {
       isLoading(false);
     }
+  }
+
+  Future<void> toggleTodoCompletion(int todoId) async {
+    _updateTodoById(
+        todoId, (todo) => todo.copyWith(completed: !todo.completed));
+  }
+
+  Future<void> archiveTodo(int todoId) async {
+    final todo = _allTodos.firstWhereOrNull((t) => t.id == todoId);
+    if (todo != null) {
+      _allTodos.remove(todo);
+      archived.add(todo.copyWith(archivedDate: DateTime.now()));
+      await _persistAllData();
+      _resetAndLoadFirstPage();
+    }
+  }
+
+  Future<void> unarchiveTodo(Todo todo) async {
+    archived.removeWhere((t) => t.id == todo.id);
+    _allTodos.add(todo);
+    _allTodos.sort((a, b) => a.id.compareTo(b.id));
+    await _persistAllData();
+    _resetAndLoadFirstPage();
+  }
+
+  void deleteTodoWithUndo(Todo todo) {
+    final index = archived.indexWhere((t) => t.id == todo.id);
+    if (index == -1) return;
+
+    _deletedTodos.add(todo);
+    archived.removeAt(index);
+
+    _deleteTimers[todo.id]?.cancel();
+    _deleteTimers[todo.id] = Timer(const Duration(seconds: 4), () async {
+      try {
+        // The dummy API doesn't support DELETE, so we simulate it.
+        // await todoService.deleteTodo(todo.id);
+        _deletedTodos.remove(todo);
+        _deleteTimers.remove(todo.id);
+      } catch (e) {
+        undoDelete(todo); // If backend fails, restore the todo
+        AppSnack.error("Failed to delete: ${e.toString()}");
+      }
+    });
+  }
+
+  void undoDelete(Todo todo) {
+    if (_deletedTodos.remove(todo)) {
+      archived.add(todo);
+      archived.sort((a, b) => a.id.compareTo(b.id));
+      storageService.saveTodos(key: _keyArchivedTodos, todos: archived);
+      _deleteTimers[todo.id]?.cancel();
+      _deleteTimers.remove(todo.id);
+    }
+  }
+
+  Future<void> updateDeadline(int id, DateTime pickedAt) async {
+    _updateTodoById(id, (todo) => todo.copyWith(deadline: pickedAt));
+  }
+
+  Future<void> updatePriority(int id, TodoPriority priority) async {
+    _updateTodoById(id, (todo) => todo.copyWith(priority: priority));
+  }
+
+  Future<void> updateTodo(Todo updatedTodo) async {
+    _updateTodoById(updatedTodo.id, (todo) => updatedTodo);
+  }
+
+  Future<void> addCollection(String collectionName) async {
+    if (!collections.contains(collectionName)) {
+      collections.add(collectionName);
+      await storageService.saveList(key: _keyCollections, items: collections);
+    }
+  }
+
+  Future<void> updateCollection(int id, String collectionName) async {
+    await addCollection(collectionName);
+    _updateTodoById(
+        id, (todo) => todo.copyWith(collectionName: collectionName));
+  }
+
+  Future<void> removeCollectionContents(String collectionName) async {
+    _allTodos.value = _allTodos.map((todo) {
+      return todo.collectionName == collectionName
+          ? todo.copyWith(collectionName: null)
+          : todo;
+    }).toList();
+    collections.remove(collectionName);
+    await _persistAllData();
+    _resetAndLoadFirstPage();
+  }
+
+  // --- Private Helpers ---
+  void _loadInitialDataFromCache() {
+    archived.value = storageService.getTodos(key: _keyArchivedTodos);
+    collections.value = storageService.getLists(key: _keyCollections);
+    final cachedTodos = storageService.getTodos(key: _keyTodos);
+    if (cachedTodos.isNotEmpty) {
+      _allTodos.value = cachedTodos;
+      _resetAndLoadFirstPage();
+      isLoading(false);
+    }
+  }
+
+  void _syncWithFetchedData(List<Todo> fetchedTodos, bool notifySync) {
+    final cachedTodos = storageService.getTodos(key: _keyTodos);
+    final activeFetchedTodos = fetchedTodos
+        .where((fetched) =>
+            !archived.any((archivedTodo) => archivedTodo.id == fetched.id))
+        .toList();
+
+    if (cachedTodos.isEmpty) {
+      _allTodos.value = activeFetchedTodos;
+    } else {
+      _allTodos.value = activeFetchedTodos.map((fetched) {
+        final cached = cachedTodos.firstWhereOrNull((c) => c.id == fetched.id);
+        return cached != null
+            ? fetched.copyWith(
+                completed: cached.completed,
+                deadline: cached.deadline,
+                priority: cached.priority,
+                collectionName: cached.collectionName,
+              )
+            : fetched;
+      }).toList();
+    }
+
+    if (notifySync) {
+      AppSnack.success('Synced.', snackPosition: SnackPosition.TOP);
+    }
+
+    _persistAllData();
+    _resetAndLoadFirstPage();
+  }
+
+  void _updateTodoById(int todoId, Todo Function(Todo todo) updater) {
+    final index = _allTodos.indexWhere((t) => t.id == todoId);
+    if (index != -1) {
+      _allTodos[index] = updater(_allTodos[index]);
+      _persistAllData();
+      final pagedIndex = todos.indexWhere((t) => t.id == todoId);
+      if (pagedIndex != -1) {
+        todos[pagedIndex] = _allTodos[index];
+      }
+    }
+  }
+
+  Future<void> _persistAllData() async {
+    await Future.wait([
+      storageService.saveTodos(key: _keyTodos, todos: _allTodos),
+      storageService.saveTodos(key: _keyArchivedTodos, todos: archived),
+      storageService.saveList(key: _keyCollections, items: collections),
+    ]);
   }
 
   void _resetAndLoadFirstPage() {
@@ -130,9 +242,7 @@ class TodoController extends GetxController {
 
   void loadMoreTodos() {
     if (!_hasMore || isLoadingMore.value) return;
-
     isLoadingMore(true);
-    // Simulate network delay for loading more data
     Future.delayed(const Duration(milliseconds: 500), () {
       _currentPage++;
       _loadPage();
@@ -143,220 +253,21 @@ class TodoController extends GetxController {
   void _loadPage() {
     final int startIndex = (_currentPage - 1) * _pageSize;
     int endIndex = startIndex + _pageSize;
-
     if (endIndex > _allTodos.length) {
       endIndex = _allTodos.length;
       _hasMore = false;
     }
-
     if (startIndex < _allTodos.length) {
-      final newItems = _allTodos.sublist(startIndex, endIndex);
-      todos.addAll(newItems);
+      todos.addAll(_allTodos.sublist(startIndex, endIndex));
     }
   }
 
-  Future<void> toggleTodoCompletion(int todoId) async {
-    final uiIndex = todos.indexWhere((todo) => todo.id == todoId);
-    if (uiIndex != -1) {
-      final todo = todos[uiIndex];
-      todos[uiIndex] = todo.copyWith(completed: !todo.completed);
-
-      final masterIndex = _allTodos.indexWhere((t) => t.id == todoId);
-      if (masterIndex != -1) {
-        _allTodos[masterIndex] = todos[uiIndex];
-        await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-      }
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        _hasMore &&
+        !isLoadingMore.value) {
+      loadMoreTodos();
     }
-  }
-
-  Future<void> archiveTodo(int todoId) async {
-    final uiIndex = todos.indexWhere((t) => t.id == todoId);
-    if (uiIndex != -1) {
-      final todo = todos.removeAt(uiIndex);
-
-      archived.add(
-        todo.copyWith(
-          archivedDate: DateTime.now(),
-        ),
-      );
-      _allTodos.removeWhere((t) => t.id == todoId);
-      await storageService.saveTodos(
-        key: _keyTodos,
-        todos: _allTodos,
-      );
-
-      await storageService.saveTodos(
-        key: _keyArchivedTodos,
-        todos: archived,
-      );
-    }
-  }
-
-  Future<void> unarchiveTodo(Todo todo) async {
-    final index = archived.indexWhere((e) => e.id == todo.id);
-    if (index == -1) return;
-
-    final archivedTodo = archived[index];
-
-    archived.removeAt(index);
-
-    _allTodos.insert(archivedTodo.id - 1, archivedTodo);
-    todos.insert(archivedTodo.id - 1, archivedTodo);
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-    await storageService.saveTodos(key: _keyArchivedTodos, todos: archived);
-  }
-
-  final List<Todo> _deletedTodos = [];
-
-  final RxBool isDeleting = false.obs;
-  final Map<int, Timer> _deleteTimers = {};
-
-  /// Deletes todo with undo support
-  void deleteTodoWithUndo(Todo todo) {
-    try {
-      final index = archived.indexWhere((t) => t.id == todo.id);
-      if (index == -1) return;
-
-      _deletedTodos.add(todo);
-      archived.removeAt(index);
-
-      // Cancel any previous timer for this todo
-      _deleteTimers[todo.id]?.cancel();
-
-      // Schedule final deletion after 3 seconds
-      _deleteTimers[todo.id] = Timer(const Duration(seconds: 3), () async {
-        try {
-          await todoService.deleteTodo(todo.id);
-          _deletedTodos.remove(todo); // Cleanup
-          _deleteTimers.remove(todo.id);
-        } on SocketException {
-          AppSnack.error('Please check your network.');
-        } catch (e) {
-          AppSnack.error(e.toString());
-        }
-      });
-    } catch (e) {
-      AppSnack.error(e.toString());
-    }
-  }
-
-  /// Undo deletion
-  void undoDelete(Todo todo) {
-    if (_deletedTodos.remove(todo)) {
-      archived.add(todo);
-      // Cancel backend deletion if timer exists
-      _deleteTimers[todo.id]?.cancel();
-      _deleteTimers.remove(todo.id);
-    }
-  }
-
-  /// Optional: permanent delete all pending deletes (for app exit)
-  Future<void> flushDeletedTodos() async {
-    for (var todo in List<Todo>.from(_deletedTodos)) {
-      await todoService.deleteTodo(todo.id);
-      _deletedTodos.remove(todo);
-    }
-    _deleteTimers.forEach((_, timer) => timer.cancel());
-    _deleteTimers.clear();
-  }
-
-  Future<void> updateDeadline(
-    int id,
-    DateTime pickedAt,
-  ) async {
-    final index = todos.indexWhere((e) => e.id == id);
-    if (index == -1) return;
-    todos[index] = todos[index].copyWith(deadline: pickedAt);
-    _allTodos[index] = todos[index];
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-  }
-
-  Future<void> updatePriority(
-    int id,
-    TodoPriority priority,
-  ) async {
-    final index = todos.indexWhere((e) => e.id == id);
-    if (index == -1) return;
-    todos[index] = todos[index].copyWith(priority: priority);
-    _allTodos[index] = todos[index];
-    // cache for persistency //
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-  }
-
-  Future<void> updateTodo(Todo updatedTodo) async {
-    final index = todos.indexWhere((e) => e.id == updatedTodo.id);
-    if (index == -1) return;
-    todos[index] = updatedTodo;
-    _allTodos[index] = todos[index];
-    // cache for persistency //
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-  }
-
-  Future<void> addCollection(String collectionName) async {
-    if (!collections.contains(collectionName)) {
-      collections.add(collectionName);
-    }
-
-    await storageService.saveList(key: _keyCollections, items: collections);
-  }
-
-  Future<void> _removeCollection(String collectionName) async {
-    if (collections.contains(collectionName)) {
-      collections.remove(collectionName);
-    }
-
-    await storageService.saveList(key: _keyCollections, items: collections);
-  }
-
-  Future<void> updateCollection(int id, String collectionName) async {
-    final index = todos.indexWhere((e) => e.id == id);
-    if (index == -1) return;
-    todos[index] = todos[index].copyWith(collectionName: collectionName);
-    _allTodos[index] = todos[index];
-    // cache for persistency //
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-
-    if (!collections.contains(collectionName)) {
-      addCollection(collectionName);
-    }
-  }
-
-  Future<void> removeTodoFromCollection(int id) async {
-    final index = todos.indexWhere((e) => e.id == id);
-    if (index == -1) return;
-    todos[index] = todos[index].copyWith(collectionName: '');
-    _allTodos[index] = todos[index];
-
-    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
-  }
-
-  Future<void> removeCollectionContents(String collectionName) async {
-    // Remove collection reference
-    await _removeCollection(collectionName);
-
-    // Update todos in memory
-    todos.value = todos.map((todo) {
-      return todo.collectionName == collectionName
-          ? todo.copyWith(collectionName: '')
-          : todo;
-    }).toList();
-
-    _allTodos.value = _allTodos.map((todo) {
-      return todo.collectionName == collectionName
-          ? todo.copyWith(collectionName: '')
-          : todo;
-    }).toList();
-
-    archived.value = archived.map((todo) {
-      return todo.collectionName == collectionName
-          ? todo.copyWith(collectionName: '')
-          : todo;
-    }).toList();
-
-    // Persist in one go (if possible, unify storage)
-    await Future.wait([
-      storageService.saveTodos(key: _keyTodos, todos: _allTodos),
-      storageService.saveTodos(key: _keyArchivedTodos, todos: archived),
-    ]);
   }
 }
