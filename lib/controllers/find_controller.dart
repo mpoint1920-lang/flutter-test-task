@@ -26,8 +26,10 @@ class FindController extends GetxController {
   }
 
   void applyFilters() {
-    String query = searchController.text.toLowerCase();
-    List<Todo> temp = todoController.todos;
+    final query = searchController.text.toLowerCase();
+
+    // Make a plain copy of the todos
+    List<Todo> temp = List<Todo>.from(todoController.todos);
 
     // Text filter
     if (query.isNotEmpty) {
@@ -47,35 +49,40 @@ class FindController extends GetxController {
     if (startDate.value != null) {
       temp = temp
           .where((todo) =>
-              todo.deadline != null && todo.deadline!.isAfter(startDate.value!))
+              todo.deadline != null &&
+              !todo.deadline!.isBefore(startDate.value!))
           .toList();
     }
     if (endDate.value != null) {
       temp = temp
           .where((todo) =>
-              todo.deadline != null && todo.deadline!.isBefore(endDate.value!))
+              todo.deadline != null && !todo.deadline!.isAfter(endDate.value!))
           .toList();
     }
 
     // Sorting
+    List<Todo> sorted = List<Todo>.from(temp);
     switch (todoController.currentSort.value) {
       case TodoSort.title:
-        temp.sort((a, b) => a.title.compareTo(b.title));
-        if (todoController.isSortReversed.value) temp = temp.reversed.toList();
+        sorted.sort((a, b) => a.title.compareTo(b.title));
+        if (todoController.isSortReversed.value)
+          sorted = sorted.reversed.toList();
         break;
       case TodoSort.priority:
-        temp.sort((a, b) => b.priority.index.compareTo(a.priority.index));
+        sorted.sort((a, b) => b.priority.index.compareTo(a.priority.index));
         break;
       case TodoSort.completion:
-        temp.sort(
+        sorted.sort(
             (a, b) => a.completed.toString().compareTo(b.completed.toString()));
-        if (todoController.isSortReversed.value) temp = temp.reversed.toList();
+        if (todoController.isSortReversed.value)
+          sorted = sorted.reversed.toList();
         break;
       case TodoSort.none:
         break;
     }
 
-    filteredTodos.value = temp;
+    // Assign a new list to avoid triggering recursive updates
+    filteredTodos.value = sorted;
   }
 
   void pickDateRange(DateTimeRange? range) {

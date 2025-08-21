@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:todo_test_task/common/common.dart';
 import 'package:todo_test_task/models/models.dart';
 import 'package:todo_test_task/services/services.dart';
+import 'package:todo_test_task/theme/color_palettes.dart';
 
 class AccountController extends GetxController {
   AccountController({required this.storageService});
@@ -13,7 +14,8 @@ class AccountController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    accountInfo.value = storageService.getAccount();
+    final storedAccount = storageService.getAccount();
+    accountInfo.value = storedAccount ?? accountInfo.value;
   }
 
   final Rx<Account?> accountInfo = Rx<Account?>(
@@ -84,16 +86,19 @@ class AccountController extends GetxController {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? (isPro
-                              ? Colors.amber.withValues(alpha: 0.2)
-                              : Colors.grey
-                            ..withValues(
-                              alpha: 0.2,
-                            ))
+                              ? ColorPalettes.premiumColor
+                                  .withValues(alpha: 0.2)
+                              : Theme.of(Get.context!)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.1))
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
-                            ? (isPro ? Colors.amber : Colors.blueGrey)
+                            ? (isPro
+                                ? ColorPalettes.premiumColor
+                                : Colors.blueGrey)
                             : Colors.grey.shade300,
                         width: isSelected ? 2 : 1,
                       ),

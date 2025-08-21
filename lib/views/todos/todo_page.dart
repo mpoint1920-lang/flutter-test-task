@@ -6,6 +6,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:todo_test_task/common/enums.dart';
 import 'package:todo_test_task/controllers/controllers.dart';
 import 'package:todo_test_task/models/models.dart';
+import 'package:todo_test_task/theme/color_palettes.dart';
 import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';
@@ -21,33 +22,45 @@ class TodoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() {
-          String sortName;
-          switch (todoController.currentSort.value) {
-            case TodoSort.title:
-              sortName = 'A-Z';
-              break;
-            case TodoSort.priority:
-              sortName = 'Priority';
-              break;
-            case TodoSort.completion:
-              sortName = 'Completion';
-              break;
-            case TodoSort.none:
-              sortName = 'Inbox';
-              break;
-          }
-          return Text(sortName);
-        }),
+        title: const Text('Inbox'),
         actions: [
+          Obx(
+            () {
+              String sortName;
+              switch (todoController.currentSort.value) {
+                case TodoSort.title:
+                  sortName = 'A-Z';
+                  break;
+                case TodoSort.priority:
+                  sortName = 'Priority';
+                  break;
+                case TodoSort.completion:
+                  sortName = 'Completion';
+                  break;
+                case TodoSort.none:
+                  sortName = '';
+                  break;
+              }
+
+              if (sortName.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return AppChip(
+                title: sortName,
+                bgColor: Theme.of(context).colorScheme.primaryContainer,
+              );
+            },
+          ),
           Obx(() {
             final hasSort = todoController.currentSort.value != TodoSort.none;
             return badges.Badge(
               showBadge: hasSort,
               badgeContent: const SizedBox(
-                width: 8,
-                height: 8,
+                width: 2,
+                height: 2,
               ),
+              position: badges.BadgePosition.topEnd(top: 10, end: 10),
               child: PopupMenuButton<TodoSort>(
                 icon: const Icon(Icons.sort),
                 onSelected: (value) => todoController.sortTodos(value),
@@ -149,6 +162,7 @@ class TodoPage extends StatelessWidget {
         return LiquidPullToRefresh(
           showChildOpacityTransition: false,
           height: Get.height * 0.05,
+          springAnimationDurationInMilliseconds: 100,
           onRefresh: () => todoController.loadTodos(isRefresh: true),
           child: ListView.builder(
             controller: todoController.scrollController,
@@ -186,8 +200,6 @@ class _TodoSearchDelegate extends SearchDelegate<Todo?> {
           onPressed: () {
             query = '';
             findController.searchController.clear();
-
-            // Schedule filter update after build
             WidgetsBinding.instance.addPostFrameCallback((_) {
               findController.applyFilters();
             });
@@ -206,9 +218,8 @@ class _TodoSearchDelegate extends SearchDelegate<Todo?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    findController.searchController.text = query;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      findController.searchController.text = query;
       findController.applyFilters();
     });
 
@@ -229,9 +240,8 @@ class _TodoSearchDelegate extends SearchDelegate<Todo?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    findController.searchController.text = query;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      findController.searchController.text = query;
       findController.applyFilters();
     });
 
