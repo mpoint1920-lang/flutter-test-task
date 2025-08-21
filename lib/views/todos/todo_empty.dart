@@ -42,7 +42,7 @@ class TodoEmpty extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              description ?? '',
+              description,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.grey[600],
                   ),

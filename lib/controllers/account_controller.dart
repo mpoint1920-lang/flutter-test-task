@@ -84,8 +84,11 @@ class AccountController extends GetxController {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? (isPro
-                              ? Colors.amber.withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.2))
+                              ? Colors.amber.withValues(alpha: 0.2)
+                              : Colors.grey
+                            ..withValues(
+                              alpha: 0.2,
+                            ))
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(

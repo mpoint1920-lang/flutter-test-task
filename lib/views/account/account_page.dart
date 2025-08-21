@@ -12,10 +12,7 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     final accountCtrl = Get.find<AccountController>();
-    final todoCtrl = Get.find<TodoController>();
 
     return Scaffold(
       appBar: _AccountAppBar(accountCtrl: accountCtrl),

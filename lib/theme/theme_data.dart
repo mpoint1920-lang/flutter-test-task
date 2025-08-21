@@ -11,11 +11,9 @@ final ThemeData lightTheme = ThemeData(
   colorScheme: const ColorScheme.light(
     primary: ColorPalettes.lightPrimary,
     secondary: ColorPalettes.lightAccent,
-    background: ColorPalettes.lightBackground,
     surface: ColorPalettes.lightSurface,
     onPrimary: ColorPalettes.lightOnPrimary,
     onSecondary: Colors.white,
-    onBackground: ColorPalettes.lightOnBackground,
     onSurface: ColorPalettes.lightOnSurface,
     error: Colors.redAccent,
     onError: Colors.white,
@@ -116,11 +114,9 @@ final ThemeData darkTheme = ThemeData(
   colorScheme: const ColorScheme.dark(
     primary: ColorPalettes.darkPrimary,
     secondary: ColorPalettes.darkAccent,
-    background: ColorPalettes.darkBackground,
     surface: ColorPalettes.darkSurface,
     onPrimary: ColorPalettes.darkOnPrimary,
     onSecondary: Colors.white,
-    onBackground: ColorPalettes.darkOnBackground,
     onSurface: ColorPalettes.darkOnSurface,
     error: ColorPalettes.errorColor,
     onError: Colors.white,

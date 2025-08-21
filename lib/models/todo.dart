@@ -66,7 +66,7 @@ class Todo {
       'archivedDate': archivedDate?.toIso8601String(),
       'collectionName': collectionName,
       'deadline': deadline?.toIso8601String(),
-      'priority': priority?.name,
+      'priority': priority.name,
     };
   }
 

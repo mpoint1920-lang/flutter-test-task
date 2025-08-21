@@ -139,11 +139,11 @@ class TodoCard extends StatelessWidget {
                                 final difference =
                                     target.difference(today).inDays;
 
-                                if (difference < 0)
-                                  return Colors.red; // Yesterday or earlier
-                                if (difference == 0)
-                                  return Colors.green; // Today
-                                return Colors.grey; // Tomorrow or later
+                                return (difference < 0)
+                                    ? Colors.red
+                                    : (difference == 0)
+                                        ? Colors.green
+                                        : Colors.grey;
                               })(),
                             ),
                             const SizedBox(width: 4),
@@ -160,11 +160,11 @@ class TodoCard extends StatelessWidget {
                                   final difference =
                                       target.difference(today).inDays;
 
-                                  if (difference < 0)
-                                    return Colors.red; // Yesterday or earlier
-                                  if (difference == 0)
-                                    return Colors.green; // Today
-                                  return Colors.grey; // Tomorrow or later
+                                  return (difference < 0)
+                                      ? Colors.red
+                                      : (difference == 0)
+                                          ? Colors.green
+                                          : Colors.grey;
                                 })(),
                               ),
                             ),
@@ -189,7 +189,7 @@ class TodoCard extends StatelessWidget {
                                 color: Color(todo.priority.colorValue)),
                             const SizedBox(width: 4),
                             Text(
-                              todo.priority!.name,
+                              todo.priority.name,
                               style: const TextStyle(fontSize: 12),
                             ),
                           ],
@@ -239,7 +239,7 @@ class TodoCard extends StatelessWidget {
             },
           ),
           Divider(
-            color: ColorPalettes.lightOnSurface.withOpacity(0.09),
+            color: ColorPalettes.lightOnSurface.withValues(alpha: 0.09),
             height: 2,
           ),
         ],
