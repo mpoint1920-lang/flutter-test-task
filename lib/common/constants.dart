@@ -1,1 +1,4 @@
-abstract class AppConstants {}
+abstract class AppConstants {
+  // Memberships
+  static const freeCollectionLimit = 2;
+}

@@ -24,7 +24,7 @@ class AppRoutes {
       binding: HomeBinding(),
     ),
     GetPage(
-      name: RouteNames.collection,
+      name: '${RouteNames.collection}/:name',
       page: () {
         final encodedName = Get.parameters['name']!;
         final collectionName = Uri.decodeComponent(encodedName);
