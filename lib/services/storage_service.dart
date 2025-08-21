@@ -60,8 +60,25 @@ class StorageService {
     return null;
   }
 
-  /// Clear account info (optional)
+  /// Clear account info
   Future<void> clearAccount() async {
     await _box.remove('account_info');
+  }
+
+  /// --- Generic Key-Value Storage ---
+
+  /// Save a simple key-value string pair
+  Future<void> setValue(String key, String value) async {
+    await _box.write(key, value);
+  }
+
+  /// Retrieve a simple value by key
+  String? getValue(String key) {
+    return _box.read<String>(key);
+  }
+
+  /// Remove a key from storage
+  Future<void> removeValue(String key) async {
+    await _box.remove(key);
   }
 }

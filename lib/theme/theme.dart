@@ -118,24 +118,31 @@ final ThemeData darkTheme = ThemeData(
     background: ColorPalettes.darkBackground,
     surface: ColorPalettes.darkSurface,
     onPrimary: ColorPalettes.darkOnPrimary,
-    onSecondary: Colors.black,
+    onSecondary: Colors.white,
     onBackground: ColorPalettes.darkOnBackground,
     onSurface: ColorPalettes.darkOnSurface,
-    error: Colors.red,
+    error: ColorPalettes.errorColor,
     onError: Colors.white,
   ),
   appBarTheme: AppBarTheme(
-    backgroundColor: ColorPalettes.darkPrimary,
+    backgroundColor: ColorPalettes.darkSurface,
     foregroundColor: ColorPalettes.darkOnPrimary,
-    elevation: 4,
+    elevation: 2,
     titleTextStyle: GoogleFonts.lato(
-      fontSize: 20,
+      fontSize: 24,
       fontWeight: FontWeight.bold,
-      color: ColorPalettes.darkOnPrimary,
+      color: ColorPalettes.darkOnSurface,
+    ),
+    iconTheme: const IconThemeData(
+      color: ColorPalettes.darkOnSurface,
+    ),
+    actionsIconTheme: const IconThemeData(
+      color: ColorPalettes.darkOnSurface,
     ),
   ),
-  dividerTheme: const DividerThemeData(
-    color: ColorPalettes.darkOnSurface,
+  dividerTheme: DividerThemeData(
+    color: ColorPalettes.darkOnSurface.withValues(alpha: .3),
+    thickness: .5,
   ),
   textTheme: TextTheme(
     displayLarge: GoogleFonts.montserrat(
@@ -181,23 +188,24 @@ final ThemeData darkTheme = ThemeData(
     bodySmall:
         GoogleFonts.roboto(fontSize: 12, color: ColorPalettes.darkOnSurface),
     labelLarge: GoogleFonts.lato(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-        color: ColorPalettes.darkOnPrimary),
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: ColorPalettes.darkOnPrimary,
+    ),
   ),
   navigationBarTheme: NavigationBarThemeData(
     indicatorColor: ColorPalettes.darkPrimary.withValues(alpha: .5),
-    backgroundColor: ColorPalettes.darkPrimaryLight,
+    backgroundColor: ColorPalettes.darkSurface,
     surfaceTintColor: ColorPalettes.darkPrimary,
-    elevation: 4,
+    elevation: 2,
     labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
     iconTheme: WidgetStateProperty.all(
-      const IconThemeData(size: 32),
+      const IconThemeData(size: 32, color: ColorPalettes.darkOnSurface),
     ),
-    labelTextStyle: WidgetStateProperty.all(
+    labelTextStyle: MaterialStateProperty.all(
       GoogleFonts.lato(
         fontSize: 12,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: ColorPalettes.darkOnSurface,
       ),
     ),

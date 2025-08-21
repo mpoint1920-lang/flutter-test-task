@@ -75,15 +75,9 @@ class _AccountAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.notifications_outlined),
-          onPressed: () {
-            Get.snackbar('Notification', 'You tapped notifications');
-          },
-        ),
-        IconButton(
           icon: const Icon(Icons.settings_outlined),
           onPressed: () {
-            Get.snackbar('Settings', 'You tapped settings');
+            Get.toNamed(RouteNames.settings);
           },
         ),
       ],
