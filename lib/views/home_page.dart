@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     controller.clearError();
-                    // TODO: Call loadTodos() to retry loading data
+                    controller.loadTodos();
                   },
                   child: const Text('Retry'),
                 ),
@@ -51,15 +51,9 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        // TODO: Replace this static placeholder list with real data from controller
-        // Use controller.todos instead of the static list below
-        final List<Todo> placeholderTodos = [
-          Todo(id: 1, title: 'Learn Flutter', completed: false),
-          Todo(id: 2, title: 'Complete this test task', completed: true),
-          Todo(id: 3, title: 'Build amazing apps', completed: false),
-        ];
+        final List<Todo> todos = controller.todos;
 
-        if (placeholderTodos.isEmpty) {
+        if (todos.isEmpty) {
           return const Center(
             child: Text(
               'No todos found',
@@ -70,27 +64,30 @@ class HomePage extends StatelessWidget {
 
         return ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: placeholderTodos.length,
+          itemCount: todos.length,
           itemBuilder: (context, index) {
-            final todo = placeholderTodos[index];
+            final todo = todos[index];
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(
                   todo.title,
                   style: TextStyle(
-                    decoration: todo.completed 
-                        ? TextDecoration.lineThrough 
-                        : null,
-                    color: todo.completed 
-                        ? Colors.grey 
-                        : null,
+                    decoration: todo.completed
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                    color: todo.completed
+                        ? Colors.grey
+                        : Theme.of(context).textTheme.bodyLarge?.color,
+                    fontWeight: todo.completed
+                        ? FontWeight.normal
+                        : FontWeight.w500,
                   ),
                 ),
                 trailing: Checkbox(
                   value: todo.completed,
                   onChanged: (bool? value) {
-                    // TODO: Call controller.toggleTodoCompletion(todo.id) here
+                    controller.toggleTodoCompletion(todo.id);
                   },
                 ),
               ),
@@ -100,11 +97,11 @@ class HomePage extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Call controller.loadTodos() to refresh the data
+          controller.loadTodos();
         },
         tooltip: 'Refresh',
         child: const Icon(Icons.refresh),
       ),
     );
   }
-} 
+}
