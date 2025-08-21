@@ -7,8 +7,8 @@ import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';
 
-class CollectionPage extends GetView<TodoController> {
-  const CollectionPage({super.key, required this.name});
+class CollectionDetailPage extends GetView<TodoController> {
+  const CollectionDetailPage({super.key, required this.name});
   final String name;
 
   @override

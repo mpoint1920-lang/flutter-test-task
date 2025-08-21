@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:todo_test_task/controllers/bindings.dart';
 import 'package:todo_test_task/views/home/home_page.dart';
 import 'package:todo_test_task/views/home/archived_page.dart';
-import 'package:todo_test_task/views/collections/collection_page.dart';
+import 'package:todo_test_task/views/collections/collection_detail_page.dart';
 import 'package:todo_test_task/views/settings/setting_page.dart';
 
 class RouteNames {
@@ -30,7 +30,7 @@ class AppRoutes {
       page: () {
         final encodedName = Get.parameters['name']!;
         final collectionName = Uri.decodeComponent(encodedName);
-        return CollectionPage(name: collectionName);
+        return CollectionDetailPage(name: collectionName);
       },
       binding: HomeBinding(),
     ),

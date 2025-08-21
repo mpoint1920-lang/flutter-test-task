@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/controllers/ui_controller.dart';
 import 'package:todo_test_task/views/account/account_page.dart';
-import 'package:todo_test_task/views/search/search_page.dart';
+import 'package:todo_test_task/views/collections/search_page.dart';
 import 'package:todo_test_task/views/todos/todo_page.dart';
 
 class HomePage extends GetView<UiController> {
@@ -15,7 +15,7 @@ class HomePage extends GetView<UiController> {
             index: controller.currentPage.value,
             children: [
               TodoPage(),
-              const SearchPage(),
+              const CollectionsPage(),
               const AccountPage(),
             ],
           )),
@@ -31,9 +31,9 @@ class HomePage extends GetView<UiController> {
               label: 'Inbox',
             ),
             NavigationDestination(
-              icon: Icon(Icons.search_outlined),
-              selectedIcon: Icon(Icons.search),
-              label: 'Search',
+              icon: Icon(Icons.folder_outlined),
+              selectedIcon: Icon(Icons.folder),
+              label: 'Collections',
             ),
             NavigationDestination(
               icon: Icon(Icons.menu_outlined),
