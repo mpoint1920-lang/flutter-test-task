@@ -15,7 +15,6 @@ class TodoDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final TodoController controller = Get.find<TodoController>();
 
-    final TextEditingController commentController = TextEditingController();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -56,9 +55,64 @@ class TodoDetailSheet extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.chevron_right),
                       onPressed: () {
-                        // Navigate to collection details if needed
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (_) {
+                            return Obx(() {
+                              final collections = controller.collections;
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    'Move to Collection',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                  const Divider(),
+                                  ...collections.map((c) => ListTile(
+                                        leading: const Icon(Icons.folder),
+                                        title: Text(c),
+                                        trailing: todo.collectionName == c
+                                            ? const Icon(Icons.check,
+                                                color: Colors.green)
+                                            : null,
+                                        onTap: () {
+                                          controller.updateCollection(
+                                              todo.id, c);
+                                          Navigator.pop(context);
+                                        },
+                                      )),
+                                  ListTile(
+                                    leading: const Icon(Icons.add,
+                                        color: Colors.blue),
+                                    title: const Text("New Collection"),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      final newCollectionName =
+                                          await _showAddCollectionDialog(
+                                              context);
+                                      if (newCollectionName != null &&
+                                          newCollectionName.trim().isNotEmpty) {
+                                        controller.addCollection(
+                                            newCollectionName.trim());
+                                        controller.updateCollection(
+                                            todo.id, newCollectionName);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                          },
+                        );
                       },
-                    ),
+                    )
                   ],
                 ),
                 // const SizedBox(height: 8),
@@ -226,6 +280,36 @@ class TodoDetailSheet extends StatelessWidget {
       ),
       builder: (_) => TodoDetailSheet(todoId: todo.id),
       backgroundColor: Theme.of(context).colorScheme.background,
+    );
+  }
+
+  Future<String?> _showAddCollectionDialog(BuildContext context) async {
+    final TextEditingController textController = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("New Collection"),
+          content: TextField(
+            controller: textController,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: "Enter collection name",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () =>
+                  Navigator.pop(context, textController.text.trim()),
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

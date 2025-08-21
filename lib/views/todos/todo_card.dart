@@ -208,8 +208,27 @@ class TodoCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                // Right side: TodoType
-                if (type != null)
+                if ((todo.collectionName ?? '').isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: ColorPalettes.disabledColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 2,
+                      ),
+                      child: Text(
+                        todo.collectionName ?? '',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  )
+                else if (type != null)
                   Row(
                     children: [
                       Text(
@@ -224,6 +243,9 @@ class TodoCard extends StatelessWidget {
               ],
             ),
             onTap: () {
+              controller.toggleTodoCompletion(todo.id);
+            },
+            onLongPress: () {
               TodoDetailSheet.show(context, todo);
             },
           ),

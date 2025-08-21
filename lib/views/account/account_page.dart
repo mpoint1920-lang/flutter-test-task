@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_test_task/controllers/todo_controller.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -8,6 +9,8 @@ class AccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    final todoCtrl = Get.find<TodoController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -43,49 +46,75 @@ class AccountPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
+      body: Container(
         padding: const EdgeInsets.all(12),
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.archive),
-            title: const Text('Archived'),
-            onTap: () {
-              Get.toNamed('/archived');
-            },
-            trailing: const Icon(Icons.chevron_right),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Collections',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton.icon(
-            onPressed: () {
-              Get.snackbar('Collections', 'Add a new collection');
-            },
-            icon: const Icon(Icons.add),
-            label: const Text('Add Collection'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              backgroundColor: colorScheme.primary,
-              foregroundColor: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.archive),
+              title: const Text('Archived'),
+              onTap: () {
+                Get.toNamed('/archived');
+              },
+              trailing: const Icon(Icons.chevron_right),
             ),
-          ),
-          const SizedBox(height: 10),
-          // Example existing collections
-          ListTile(
-            leading: const Icon(Icons.folder),
-            title: const Text('Work'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.folder),
-            title: const Text('Personal'),
-            onTap: () {},
-          ),
-        ],
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.star_border_purple500),
+              title: const Text('Membership'),
+              onTap: () {
+                Get.toNamed('/membership');
+              },
+              trailing: const Icon(Icons.chevron_right),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Collections',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () {
+                Get.snackbar('Collections', 'Add a new collection');
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add Collection'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                backgroundColor: colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Example existing collections
+            Expanded(
+              child: Obx(
+                () => todoCtrl.collections.isEmpty
+                    ? const ListTile(
+                        enabled: false,
+                        leading: Icon(Icons.folder),
+                        title: Text('Eg. Work'),
+                        onTap: null,
+                      )
+                    : ListView.builder(
+                        itemCount: todoCtrl.collections.length,
+                        itemBuilder: (c, i) {
+                          final collection = todoCtrl.collections[i];
+                          return ListTile(
+                            leading: const Icon(Icons.folder),
+                            title: Text(collection),
+                            onTap: () {
+                              Get.toNamed('/collections/$collection');
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

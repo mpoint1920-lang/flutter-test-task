@@ -65,3 +65,35 @@ String getFriendlyDate(DateTime date) {
   if (difference == 1) return 'Tomorrow';
   return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
+
+class GlobalSnackBar {
+  final String message;
+
+  const GlobalSnackBar({
+    required this.message,
+  });
+
+  static show(
+    BuildContext context,
+    String message,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        elevation: 0.0,
+        //behavior: SnackBarBehavior.floating,
+        content: Text(message),
+        duration: const Duration(seconds: 5000000),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        ),
+        //backgroundColor: Colors.redAccent,
+        action: SnackBarAction(
+          textColor: const Color(0xFFFAF2FB),
+          label: 'OK',
+          onPressed: () {},
+        ),
+      ),
+    );
+  }
+}

@@ -4,6 +4,26 @@ import '../models/todo.dart';
 class StorageService {
   final GetStorage _box = GetStorage();
 
+  // Save a list of lists to local storage
+  Future<void> saveList({
+    required String key,
+    required List<String> items,
+  }) async {
+    final List<String> data = items.map((todo) => todo).toList();
+    await _box.write(key, data);
+  }
+
+  // Retrieve a list of lists from local storage
+  List<String> getLists({
+    required String key,
+  }) {
+    final data = _box.read<List>(key);
+    if (data != null) {
+      return data.map((item) => item.toString()).toList();
+    }
+    return [];
+  }
+
   // Save a list of todos to local storage
   Future<void> saveTodos({
     required String key,
