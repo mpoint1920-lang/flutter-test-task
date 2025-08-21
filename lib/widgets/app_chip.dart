@@ -6,10 +6,13 @@ class AppChip extends StatelessWidget {
     required this.title,
     this.bgColor,
     this.onTap,
+    this.padding = const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
   });
+
   final String title;
   final Color? bgColor;
   final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class AppChip extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+              padding: padding,
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.displayLarge!.copyWith(

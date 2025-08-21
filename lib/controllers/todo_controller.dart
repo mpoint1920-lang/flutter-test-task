@@ -277,4 +277,43 @@ class TodoController extends GetxController {
       loadMoreTodos();
     }
   }
+
+  var currentSort = TodoSort.none.obs;
+  var isSortReversed = false.obs;
+
+  // --- Sorting ---
+  void sortTodos(TodoSort sort) {
+    if (currentSort.value == sort) {
+      // Toggle reverse for specific sort types
+      isSortReversed.value = !isSortReversed.value;
+    } else {
+      currentSort.value = sort;
+      isSortReversed.value = false; // reset direction for new sort
+    }
+
+    switch (sort) {
+      case TodoSort.title:
+        _allTodos.sort((a, b) => isSortReversed.value
+            ? b.title.compareTo(a.title)
+            : a.title.compareTo(b.title));
+        break;
+      case TodoSort.priority:
+        _allTodos.sort((a, b) => isSortReversed.value
+            ? a.priority.index.compareTo(b.priority.index)
+            : b.priority.index.compareTo(a.priority.index));
+        break;
+      case TodoSort.completion:
+        _allTodos.sort((a, b) => isSortReversed.value
+            ? a.completed.toString().compareTo(b.completed.toString())
+            : b.completed.toString().compareTo(a.completed.toString()));
+        break;
+      case TodoSort.none:
+        _allTodos.sort((a, b) => a.id.compareTo(b.id)); // default order
+        break;
+    }
+
+    _resetAndLoadFirstPage();
+  }
 }
+
+enum TodoSort { none, title, priority, completion }
