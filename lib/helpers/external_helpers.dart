@@ -15,7 +15,7 @@ class ExternalHelpers {
   static Future<void> playSound(SoundType type) async {
     final asset = _soundAssets[type];
     if (asset != null) {
-      await _player.play(AssetSource(asset));
+      await _player.play(AssetSource(asset), volume: 5);
     }
   }
 }

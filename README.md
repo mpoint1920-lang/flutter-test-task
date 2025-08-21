@@ -1,74 +1,93 @@
-# Todo Test Task
+<p align="center">
+  <img src="assets/logo.png" alt="Typicode Todo Logo" width="120" height="120"/>
+</p>
 
-A Flutter test task for candidates to demonstrate their skills in API integration, state management, and UI implementation.
+<h1 align="center">Typicode Todo</h1>
 
-## Task Overview
+<p align="center">
+This project fetches and displays a list of todos from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/todos).
 
-Fetch and display a list of todos from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/todos). The project compiles and runs but has incomplete parts that need implementation.
+</p>
 
-## Sample UI
+---
 
-![Sample UI](assets/sample_ui.png)
+**📝 Summary**
+`The project compiles and runs, but originally had incomplete parts that needed further implementation. I expanded it into a realistic production-ready example app.`
 
-## Features to Implement
+**🎯 Goal**
+`I wanted to showcase how a real-life, complex, scalable and production-ready app could be built
+with a very minimal scopes of requirements`
 
-- **API Integration**: Fetch todos from JSONPlaceholder API
-- **State Management**: Use GetX for controller and state management
-- **UI Logic**: Connect existing UI components to real Data
-- **Refresh Functionality**: Reload data using floating action button
-- **Error Handling**: Show loading states and error messages
+---
 
-## Project Structure
+## 📸 Screenshots
 
-```
-lib/
- ├─ main.dart                 # App entry point
- ├─ models/todo.dart          # Todo data model
- ├─ services/api_service.dart # API service (incomplete)
- ├─ controllers/todo_controller.dart # GetX controller (incomplete)
- └─ views/home_page.dart      # Main UI (incomplete)
-```
+<p align="center">
+  <img src="assets/demo/dark_home.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/detail.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/dark_detail.png" alt="Todo List" width="200"/>
+</p>
+
+<p align="center">
+   <img src="assets/demo/search_todo.png" alt="Todo List" width="200"/>
+   <img src="assets/demo/dark_add_collections.png" alt="Todo List" width="200"/>
+   <img src="assets/demo/collection.png" alt="Todo List" width="200"/>
+</p>
+
+<p align="center">
+  <img src="assets/demo/landscape_collection.png" alt="Todo List" height="200"/>
+  <img src="assets/demo/landscape_pro.png" alt="Todo List" height="200"/>
+</p>
+
+<p align="center">
+  <img src="assets/demo/dark_land_collection.png" alt="Todo List" height="200"/>
+<img src="assets/demo/large_todo.png" alt="Todo List" height="200"/>
+  <img src="assets/demo/dark_no_archive.png" alt="Todo List" height="200"/>
+</p>
+
+## ✨ Implemented Features
+
+### 🔹 Original Requirements
+
+- ✅ **API Integration**: Fetch todos from JSONPlaceholder API
+- ✅ **State Management**: GetX for controller & state management
+- ✅ **UI Logic**: Connected existing UI components to real data
+- ✅ **Refresh Functionality**: Reload data using a floating action button
+- ✅ **Error Handling**: Show loading states and error messages
+
+### 🔹 Additional Features
+
+- ✅ **CRUD Implementation** (Create, Read, Update, Delete)
+- ✅ **Search, Filter & Categorization of Todos**
+- ✅ **Caching** for optimized performance & smooth UX
+- ✅ **Paywall Sample Implementation**
+- ✅ **Localization Support**
+- ✅ **Consistent Theme Management**
+- ✅ **Action Sounds** for better UX
+- ✅ **Responsive Design** for different screens
+- ✅ **Custom App Icon** (designed in Figma)
+- ...and **many more enhancements** 🎉
+
+---
 
 ## Setup
 
 1. Install dependencies: `flutter pub get`
 2. Run the project: `flutter run`
 
-## TODO Items
+## Build Local Testing
 
-### 1. API Service (`lib/services/api_service.dart`)
+```
+flutter build apk \
+  --release \
+  --obfuscate \
+  --split-debug-info=build/symbols
 
-- Implement `fetchTodos()` method to fetch from `https://jsonplaceholder.typicode.com/todos`
+```
 
-### 2. Todo Controller (`lib/controllers/todo_controller.dart`)
+## 🤝 Contributions
 
-- Complete `loadTodos()` method with loading states and error handling
-- Implement `toggleTodoCompletion(int id)` method
-- Initialize data loading in `onInit()`
+If you’d like to contribute:  
+Please first read the [CONTRIBUTING.md](CONTRIBUTING.md) guide.
 
-### 3. UI (`lib/views/home_page.dart`)
-
-- Replace static data with real data from controller
-- Connect checkbox functionality
-- Implement refresh and retry buttons
-
-## API Endpoint
-
-- **URL**: `https://jsonplaceholder.typicode.com/todos`
-- **Method**: GET
-- **Response**: Array of todo objects with `id`, `title`, and `completed` fields
-
-## Submission
-
-1. Complete the implementation
-2. Take a screenshot of your working app
-3. Create a pull request with your name in the format: **"First Last - Todo Test Task"**
-4. Include the screenshot in your PR description
-5. Ensure the app loads todos, allows completion toggling, and handles refresh/errors
-
-## Dependencies
-
-- `get: ^4.6.5` - State management
-- `http: ^1.1.0` - HTTP requests
-
-Good luck! 🚀
+---
