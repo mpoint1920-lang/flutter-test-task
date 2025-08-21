@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_test_task/common/common.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
 import 'package:todo_test_task/models/todo.dart';
 import 'package:todo_test_task/services/storage_service.dart';
@@ -237,5 +238,28 @@ class TodoController extends GetxController {
     }
     _deleteTimers.forEach((_, timer) => timer.cancel());
     _deleteTimers.clear();
+  }
+
+  Future<void> updateDeadline(
+    int id,
+    DateTime pickedAt,
+  ) async {
+    final index = todos.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+    todos[index] = todos[index].copyWith(deadline: pickedAt);
+    _allTodos[index] = todos[index];
+    await storageService.saveTodos(key: _keyTodosKey, todos: _allTodos);
+  }
+
+  Future<void> updatePriority(
+    int id,
+    TodoPriority priority,
+  ) async {
+    final index = todos.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+    todos[index] = todos[index].copyWith(priority: priority);
+    _allTodos[index] = todos[index];
+    // cache for persistency //
+    await storageService.saveTodos(key: _keyTodosKey, todos: _allTodos);
   }
 }
