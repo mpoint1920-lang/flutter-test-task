@@ -43,12 +43,14 @@ class TodoDetailSheet extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(todo.collectionName == null
+                    Icon((todo.collectionName ?? '').isEmpty
                         ? Icons.inbox
                         : Icons.inbox),
                     const SizedBox(width: 2),
                     Text(
-                      todo.collectionName ?? "Inbox",
+                      (todo.collectionName ?? '').isNotEmpty
+                          ? todo.collectionName ?? ''
+                          : "Inbox",
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16),
                     ),
@@ -61,55 +63,7 @@ class TodoDetailSheet extends StatelessWidget {
                             borderRadius:
                                 BorderRadius.vertical(top: Radius.circular(20)),
                           ),
-                          builder: (_) {
-                            return Obx(() {
-                              final collections = controller.collections;
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'Move to Collection',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                  const Divider(),
-                                  ...collections.map((c) => ListTile(
-                                        leading: const Icon(Icons.folder),
-                                        title: Text(c),
-                                        trailing: todo.collectionName == c
-                                            ? const Icon(Icons.check,
-                                                color: Colors.green)
-                                            : null,
-                                        onTap: () {
-                                          controller.updateCollection(
-                                              todo.id, c);
-                                          Navigator.pop(context);
-                                        },
-                                      )),
-                                  ListTile(
-                                    leading: const Icon(Icons.add,
-                                        color: Colors.blue),
-                                    title: const Text("New Collection"),
-                                    onTap: () async {
-                                      Navigator.pop(context);
-                                      final newCollectionName =
-                                          await _showAddCollectionDialog(
-                                              context);
-                                      if (newCollectionName != null &&
-                                          newCollectionName.trim().isNotEmpty) {
-                                        controller.addCollection(
-                                            newCollectionName.trim());
-                                        controller.updateCollection(
-                                            todo.id, newCollectionName);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                          },
+                          builder: (_) => _CollectionPickerSheet(todo: todo),
                         );
                       },
                     )
@@ -282,36 +236,6 @@ class TodoDetailSheet extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
-
-  Future<String?> _showAddCollectionDialog(BuildContext context) async {
-    final TextEditingController textController = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("New Collection"),
-          content: TextField(
-            controller: textController,
-            autofocus: true,
-            decoration: const InputDecoration(
-              hintText: "Enter collection name",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () =>
-                  Navigator.pop(context, textController.text.trim()),
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 Future<void> editTodoDialog(BuildContext context, Todo todo) async {
@@ -369,4 +293,95 @@ Future<void> editTodoDialog(BuildContext context, Todo todo) async {
       );
     },
   );
+}
+
+class _CollectionPickerSheet extends StatelessWidget {
+  final Todo todo;
+  const _CollectionPickerSheet({required this.todo});
+
+  @override
+  Widget build(BuildContext context) {
+    final TodoController controller = Get.find<TodoController>();
+    final theme = Theme.of(context);
+
+    return Obx(() {
+      final collections = controller.collections;
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Drag Handle
+            Container(
+              width: 40,
+              height: 5,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[300],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            Text(
+              'Move to Collection',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+
+            // Collections List
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  ...collections.map((c) => ListTile(
+                        leading: Icon(Icons.folder_outlined,
+                            color: Colors.grey[600]),
+                        title: Text(c),
+                        trailing: todo.collectionName == c
+                            ? Icon(Icons.check_circle,
+                                color: theme.colorScheme.primary)
+                            : null,
+                        onTap: () {
+                          if (todo.collectionName != c) {
+                            controller.updateCollection(todo.id, c);
+                          } else {
+                            controller.removeTodoFromCollection(todo.id);
+                          }
+                          Navigator.pop(context);
+                        },
+                      )),
+                ],
+              ),
+            ),
+            const Divider(),
+
+            // New Collection Button
+            ListTile(
+              leading: Icon(Icons.add_circle_outline,
+                  color: theme.colorScheme.primary),
+              title: Text(
+                "New Collection",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
+                final newCollectionName =
+                    await showAddCollectionDialog(context);
+                if (newCollectionName != null &&
+                    newCollectionName.trim().isNotEmpty) {
+                  controller.addCollection(newCollectionName.trim());
+                  controller.updateCollection(todo.id, newCollectionName);
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    });
+  }
 }

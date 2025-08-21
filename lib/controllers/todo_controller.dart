@@ -20,7 +20,7 @@ class TodoController extends GetxController {
 
   TodoController({required this.todoService, required this.storageService});
 
-  List<Todo> _allTodos = [];
+  var _allTodos = <Todo>[].obs;
   List<Todo> toDosInCollection(String collectionName) =>
       _allTodos.where((t) => t.collectionName == collectionName).toList();
   var archived = <Todo>[].obs;
@@ -73,7 +73,7 @@ class TodoController extends GetxController {
     final cachedTodos = storageService.getTodos(key: _keyTodos);
     if (!isRefresh) {
       if (cachedTodos.isNotEmpty) {
-        _allTodos = cachedTodos;
+        _allTodos.value = cachedTodos;
         _resetAndLoadFirstPage();
         isLoading(false);
       }
@@ -83,15 +83,15 @@ class TodoController extends GetxController {
       errorMessage('');
       isSocketError(false);
       final fetchedTodos = await todoService.fetchTodos();
-      _allTodos = fetchedTodos;
-      _allTodos = _allTodos
+      _allTodos.value = fetchedTodos;
+      _allTodos.value = _allTodos
           .where((todo) => archived.indexWhere((a) => a.id == todo.id) == -1)
           .toList();
 
       if (cachedTodos.isEmpty) {
         await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
       } else {
-        _allTodos = _allTodos.map((e) {
+        _allTodos.value = _allTodos.map((e) {
           final index = cachedTodos.indexWhere((a) => a.id == e.id);
 
           return index == -1
@@ -321,6 +321,15 @@ class TodoController extends GetxController {
     }
   }
 
+  Future<void> removeTodoFromCollection(int id) async {
+    final index = todos.indexWhere((e) => e.id == id);
+    if (index == -1) return;
+    todos[index] = todos[index].copyWith(collectionName: '');
+    _allTodos[index] = todos[index];
+
+    await storageService.saveTodos(key: _keyTodos, todos: _allTodos);
+  }
+
   Future<void> removeCollectionContents(String collectionName) async {
     // Remove collection reference
     await _removeCollection(collectionName);
@@ -332,7 +341,7 @@ class TodoController extends GetxController {
           : todo;
     }).toList();
 
-    _allTodos = _allTodos.map((todo) {
+    _allTodos.value = _allTodos.map((todo) {
       return todo.collectionName == collectionName
           ? todo.copyWith(collectionName: '')
           : todo;

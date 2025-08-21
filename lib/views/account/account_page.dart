@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
+import 'package:todo_test_task/helpers/ui_helpers.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -76,8 +77,20 @@ class AccountPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ElevatedButton.icon(
-              onPressed: () {
-                Get.snackbar('Collections', 'Add a new collection');
+              onPressed: () async {
+                final newCollectionName =
+                    await showAddCollectionDialog(context);
+                if (newCollectionName != null && newCollectionName.isNotEmpty) {
+                  todoCtrl.addCollection(newCollectionName).then(
+                    (v) {
+                      showInfoSnackBar(
+                        context: Get.context!,
+                        message:
+                            'Collection "$newCollectionName" has been added.',
+                      );
+                    },
+                  );
+                }
               },
               icon: const Icon(Icons.add),
               label: const Text('Add Collection'),

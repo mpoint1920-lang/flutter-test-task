@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'package:todo_test_task/common/enums.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
 import 'package:todo_test_task/theme/color_palettes.dart';
 import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';
-import 'package:todo_test_task/widgets/error_page.dart';
 
 class CollectionsPage extends GetView<TodoController> {
   const CollectionsPage({super.key});
@@ -21,14 +18,28 @@ class CollectionsPage extends GetView<TodoController> {
         title: Text(collectionName),
         actions: [
           IconButton(
-            onPressed: () {
-              controller.removeCollectionContents(collectionName).then((e) {
-                Navigator.pop(context);
-                GlobalSnackBar.show(context, 'Collection Deleted');
-              });
+            onPressed: () async {
+              final confirmed = await showConfirmationDialog(
+                context: context,
+                title: 'Delete Collection',
+                content:
+                    'Are you sure you want to delete all tasks in "$collectionName"? This action cannot be undone.',
+                confirmText: 'Delete',
+              );
+
+              if (confirmed) {
+                await controller.removeCollectionContents(collectionName);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  showInfoSnackBar(
+                    context: context,
+                    message: 'Collection "$collectionName" was deleted.',
+                  );
+                }
+              }
             },
             icon: const Icon(
-              Icons.delete,
+              Icons.delete_outline,
               color: ColorPalettes.errorColor,
             ),
           ),
@@ -43,23 +54,22 @@ class CollectionsPage extends GetView<TodoController> {
 
         if (todos.isEmpty) {
           return const TodoEmpty(
-            title: "You're all caught up!",
-            description: "Enjoy the rest of your day.",
+            icon: Icon(
+              Icons.folder_copy_outlined,
+              size: 150,
+              color: ColorPalettes.disabledColor,
+            ),
+            title: "Empty Collection",
+            description: "Tasks you add to this collection will appear here.",
           );
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           itemCount: todos.length,
           itemBuilder: (context, index) {
-            if (index == todos.length) {
-              return const Center(child: CircularProgressIndicator());
-            }
             final todo = todos[index];
-            return TodoCard(
-              todo: todo,
-              type: TodoType.inbox,
-            );
+            return TodoCard(todo: todo);
           },
         );
       }),
