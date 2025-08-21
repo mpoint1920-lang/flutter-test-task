@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/controllers/ui_controller.dart';
 import 'package:todo_test_task/views/account/account_page.dart';
+import 'package:todo_test_task/views/search/search_page.dart';
 import 'package:todo_test_task/views/todos/todo_page.dart';
 
 class HomePage extends GetView<UiController> {
@@ -12,10 +13,10 @@ class HomePage extends GetView<UiController> {
     return Scaffold(
       body: Obx(() => IndexedStack(
             index: controller.currentPage.value,
-            children: const [
+            children: [
               TodoPage(),
-              Center(child: Text('Search Page')),
-              AccountPage(),
+              const SearchPage(),
+              const AccountPage(),
             ],
           )),
       bottomNavigationBar: Obx(
@@ -35,7 +36,7 @@ class HomePage extends GetView<UiController> {
               label: 'Search',
             ),
             NavigationDestination(
-              icon: Icon(Icons.account_circle_outlined),
+              icon: Icon(Icons.menu_outlined),
               selectedIcon: Icon(Icons.menu),
               label: 'More',
             ),
