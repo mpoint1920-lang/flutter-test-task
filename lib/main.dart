@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'views/home_page.dart';
+import 'package:todo_test_task/controllers/bindings.dart';
+import 'package:todo_test_task/theme/theme.dart';
+import 'controllers/ui_controller.dart';
+import 'views/home/home_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.put(UiController());
+  runApp(const TodoTestApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TodoTestApp extends StatelessWidget {
+  const TodoTestApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Todo Test Task',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const HomePage(),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
+      initialRoute: '/home',
+      getPages: [
+        GetPage(
+          name: '/home',
+          page: () => const HomePage(),
+          binding: HomeBinding(),
+        ),
+      ],
       debugShowCheckedModeBanner: false,
     );
   }
-} 
+}

@@ -1,41 +1,102 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/todo.dart';
-import '../services/api_service.dart';
+import 'package:todo_test_task/models/todo.dart';
+import 'package:todo_test_task/services/todo_service.dart';
 
 class TodoController extends GetxController {
-  final ApiService _apiService = ApiService();
-  
-  final RxList<Todo> todos = <Todo>[].obs;
-  final RxBool isLoading = false.obs;
-  final RxString errorMessage = ''.obs;
+  final TodoService todoService;
+  final ScrollController scrollController = ScrollController();
+
+  TodoController({required this.todoService});
+
+  List<Todo> _allTodos = [];
+
+  var todos = <Todo>[].obs;
+  var isLoading = true.obs;
+  var isLoadingMore = false.obs;
+  var errorMessage = ''.obs;
+
+  final int _pageSize = 20;
+  int _currentPage = 1;
+  bool _hasMore = true;
 
   @override
   void onInit() {
     super.onInit();
-    // TODO: Call loadTodos() when the controller is initialized
+    loadTodos();
+    scrollController.addListener(_scrollListener);
   }
 
-  // TODO: Implement this function to load todos from the API
-  // 1. Set isLoading to true
-  // 2. Clear any previous error messages
-  // 3. Call _apiService.fetchTodos()
-  // 4. Update the todos list with the fetched data
-  // 5. Handle any errors and set errorMessage
-  // 6. Set isLoading to false when done
-  Future<void> loadTodos() async {
-    // TODO: Add implementation here
+  @override
+  void onClose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.onClose();
   }
 
-  // TODO: Implement this function to toggle the completion status of a todo
-  // 1. Find the todo with the given id in the todos list
-  // 2. Create a new Todo object with the opposite completed status
-  // 3. Update the todo in the list
-  // 4. Use the copyWith method to create the updated todo
-  void toggleTodoCompletion(int id) {
-    // TODO: Add implementation here
+  void _scrollListener() {
+    if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent &&
+        _hasMore &&
+        !isLoadingMore.value) {
+      loadMoreTodos();
+    }
   }
 
-  void clearError() {
-    errorMessage.value = '';
+  Future<void> loadTodos({bool isRefresh = false}) async {
+    try {
+      isLoading(true);
+      if (isRefresh) {
+        _currentPage = 1;
+        _hasMore = true;
+        todos.clear();
+      }
+      errorMessage('');
+      _allTodos = await todoService.fetchTodos();
+      _loadPage();
+    } catch (e) {
+      errorMessage(e.toString().replaceFirst("Exception: ", ""));
+    } finally {
+      isLoading(false);
+    }
   }
-} 
+
+  void loadMoreTodos() {
+    if (!_hasMore || isLoadingMore.value) return;
+
+    isLoadingMore(true);
+    // Simulate network delay for loading more data
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _currentPage++;
+      _loadPage();
+      isLoadingMore(false);
+    });
+  }
+
+  void _loadPage() {
+    final int startIndex = (_currentPage - 1) * _pageSize;
+    int endIndex = startIndex + _pageSize;
+
+    if (endIndex > _allTodos.length) {
+      endIndex = _allTodos.length;
+      _hasMore = false;
+    }
+
+    final newItems = _allTodos.sublist(startIndex, endIndex);
+    todos.addAll(newItems);
+  }
+
+  void toggleTodoCompletion(int todoId) {
+    final index = todos.indexWhere((todo) => todo.id == todoId);
+    if (index != -1) {
+      final todo = todos[index];
+      todos[index] = todo.copyWith(completed: !todo.completed);
+      Get.snackbar(
+        'Success',
+        'Task "${todo.title}" updated.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+    }
+  }
+}

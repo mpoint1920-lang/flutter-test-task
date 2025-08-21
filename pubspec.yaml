@@ -1,12 +1,12 @@
 name: todo_test_task
 description: A Flutter test task for candidates to complete missing functionality.
 
-publish_to: "none"
+publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -14,11 +14,36 @@ dependencies:
   get: ^4.6.5
   http: ^1.1.0
   cupertino_icons: ^1.0.2
+  google_fonts: ^6.3.0
+  flutter_svg: ^2.0.13
+  shimmer: ^3.0.0
+  liquid_pull_to_refresh: ^3.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+
+flutter_launcher_icons:
+  android: 'launcher_icon'
+  # ios: true
+  image_path: 'assets/logo.png'
+  min_sdk_android: 24
+  remove_alpha_ios: true
+  adaptive_icon_background: '#008000'
+
+flutter_native_splash:
+  color: '#008000'
+  image: 'assets/logo.png'
+  android_12:
+    image: 'assets/logo.png'
+    color: '#008000'
+    image_dark: 'assets/logo.png'
+    color_dark: '#008000'
