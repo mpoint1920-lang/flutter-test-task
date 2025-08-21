@@ -153,6 +153,8 @@ floatingActionButton:
  icon: Icons.add,
  activeIcon: Icons.close,
  backgroundColor: Colors.blue,
+ overlayColor: Colors.black12,
+ overlayOpacity: 0.4,
 children: [
 
 SpeedDialChild(
