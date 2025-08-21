@@ -2,18 +2,59 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/todo_controller.dart';
 import '../models/todo.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+
+  void _showAddTodoDialog( TodoController controller) {
+  final TextEditingController textController = TextEditingController();
+
+ Get.dialog(
+     AlertDialog(
+        title: const Text('Add New Todo'),
+        content: TextField(
+          controller: textController,
+          decoration: const InputDecoration(
+            hintText: 'Enter todo title',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final title = textController.text.trim();
+              if (title.isNotEmpty) {
+                controller.addTodo(title);
+                Get.back();
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+ );
+  
+}
+
 
   @override
   Widget build(BuildContext context) {
     final TodoController controller = Get.put(TodoController());
 
-    return Scaffold(
+    return Scaffold (
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Todo Test Task'),
+        title:  Center(
+        child: 
+        Text('To-Do List', 
+        style: TextStyle( 
+          fontWeight: FontWeight.bold,
+        ),),)
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -43,6 +84,8 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     controller.clearError();
                     // TODO: Call loadTodos() to retry loading data
+
+                    controller.loadTodos();
                   },
                   child: const Text('Retry'),
                 ),
@@ -53,11 +96,7 @@ class HomePage extends StatelessWidget {
 
         // TODO: Replace this static placeholder list with real data from controller
         // Use controller.todos instead of the static list below
-        final List<Todo> placeholderTodos = [
-          Todo(id: 1, title: 'Learn Flutter', completed: false),
-          Todo(id: 2, title: 'Complete this test task', completed: true),
-          Todo(id: 3, title: 'Build amazing apps', completed: false),
-        ];
+        final List<Todo> placeholderTodos = controller.todos;
 
         if (placeholderTodos.isEmpty) {
           return const Center(
@@ -71,12 +110,14 @@ class HomePage extends StatelessWidget {
         return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: placeholderTodos.length,
+
           itemBuilder: (context, index) {
             final todo = placeholderTodos[index];
             return Card(
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(
+                  
                   todo.title,
                   style: TextStyle(
                     decoration: todo.completed 
@@ -87,10 +128,13 @@ class HomePage extends StatelessWidget {
                         : null,
                   ),
                 ),
-                trailing: Checkbox(
+                leading:
+                Checkbox(
+                  
                   value: todo.completed,
                   onChanged: (bool? value) {
                     // TODO: Call controller.toggleTodoCompletion(todo.id) here
+                    controller.toggleTodoCompletion(todo.id);
                   },
                 ),
               ),
@@ -98,13 +142,47 @@ class HomePage extends StatelessWidget {
           },
         );
       }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+
+
+     
+
+floatingActionButton: 
+ SpeedDial(
+
+ 
+ icon: Icons.add,
+ activeIcon: Icons.close,
+ backgroundColor: Colors.blue,
+children: [
+
+SpeedDialChild(
+  
+  onTap: () {
+    _showAddTodoDialog(controller);
+  },
+  label: 'Add Todo',
+  child: const Icon(Icons.add),
+),
+
+// SizedBox(height: 10,),
+
+  SpeedDialChild(
+  
+        onTap: () {
           // TODO: Call controller.loadTodos() to refresh the data
+
+          controller.loadTodos();
         },
-        tooltip: 'Refresh',
+        label: 'Refresh',
         child: const Icon(Icons.refresh),
       ),
+]
+ )
+
+
+    
+
+
     );
   }
 } 
