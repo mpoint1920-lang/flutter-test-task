@@ -80,11 +80,15 @@ class TodoController extends GetxController {
     }
   }
 
-  Future<void> toggleTodoCompletion(int todoId) async {
+  Future<void> toggleTodoCompletion(int todoId, bool isCompleted) async {
     _updateTodoById(
       todoId,
       (todo) => todo.copyWith(completed: !todo.completed),
     );
+
+    if (!isCompleted) {
+      ExternalHelpers.playSound(SoundType.completed);
+    }
   }
 
   Future<void> archiveTodo(int todoId) async {
@@ -95,6 +99,7 @@ class TodoController extends GetxController {
       await _persistAllData();
       _resetAndLoadFirstPage();
     }
+    ExternalHelpers.playSound(SoundType.archive);
   }
 
   Future<void> unarchiveTodo(Todo todo) async {
@@ -222,9 +227,6 @@ class TodoController extends GetxController {
       _persistAllData();
       final pagedIndex = todos.indexWhere((t) => t.id == todoId);
       if (pagedIndex != -1) {
-        if (!todos[pagedIndex].completed) {
-          ExternalHelpers.playSound(SoundType.completed);
-        }
         todos[pagedIndex] = _allTodos[index];
       }
     }

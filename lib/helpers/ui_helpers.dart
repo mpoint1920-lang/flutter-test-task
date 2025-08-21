@@ -83,6 +83,8 @@ void showUndoSnackBar({
   Duration? duration,
 }) {
   final scaffoldMessenger = ScaffoldMessenger.of(context);
+  final theme = Theme.of(context);
+
   // Hide any currently displayed snackbar to avoid overlap.
   scaffoldMessenger.hideCurrentSnackBar();
 
@@ -92,10 +94,16 @@ void showUndoSnackBar({
         onTap: onTap,
         child: Row(
           children: [
-            // Use the provided icon or a default one.
-            Icon(actionIcon ?? Icons.info_outline, color: Colors.white),
+            // Use the provided icon or a default one, using theme color
+            Icon(actionIcon ?? Icons.info_outline,
+                color: theme.colorScheme.onSurface),
             const SizedBox(width: 12),
-            Expanded(child: Text(message)),
+            Expanded(
+              child: Text(
+                message,
+                style: TextStyle(color: theme.colorScheme.onSurface),
+              ),
+            ),
           ],
         ),
       ),
@@ -103,9 +111,10 @@ void showUndoSnackBar({
       action: SnackBarAction(
         label: 'Undo',
         onPressed: undoAction,
-        textColor: Colors.yellowAccent,
+        textColor: theme.colorScheme.primary,
       ),
-      behavior: SnackBarBehavior.floating, // A more modern look
+      backgroundColor: theme.colorScheme.surface, // Theme-aware background
+      behavior: SnackBarBehavior.floating, // Modern floating look
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),

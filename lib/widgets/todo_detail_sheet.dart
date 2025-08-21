@@ -48,9 +48,11 @@ class TodoDetailSheet extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon((todo.collectionName ?? '').isEmpty
-                        ? Icons.inbox
-                        : Icons.inbox),
+                    Icon(
+                      (todo.collectionName ?? '').isEmpty
+                          ? Icons.inbox
+                          : Icons.folder,
+                    ),
                     const SizedBox(width: 2),
                     Text(
                       (todo.collectionName ?? '').isNotEmpty
@@ -82,8 +84,10 @@ class TodoDetailSheet extends StatelessWidget {
                     scale: 1.2,
                     child: Checkbox(
                       value: todo.completed,
-                      onChanged: (_) =>
-                          controller.toggleTodoCompletion(todo.id),
+                      onChanged: (_) => controller.toggleTodoCompletion(
+                        todo.id,
+                        todo.completed,
+                      ),
                       shape: const CircleBorder(),
                       activeColor: theme.textTheme.titleLarge?.color,
                     ),
@@ -125,9 +129,9 @@ class TodoDetailSheet extends StatelessWidget {
                             ),
                           ),
                         ),
-                        icon: const Icon(Icons.priority_high),
+                        icon: const Icon(Icons.flag_outlined),
                         label: Text(
-                          'Priority: ${todo.priority?.name ?? 'None'}',
+                          'Priority: ${todo.priority.name}',
                           overflow: TextOverflow.ellipsis,
                         ),
                         onPressed: () {
@@ -172,7 +176,7 @@ class TodoDetailSheet extends StatelessWidget {
                               ),
                             ),
                           ),
-                          icon: const Icon(Icons.calendar_today),
+                          icon: const Icon(Icons.alarm_outlined),
                           onPressed: () async {
                             if (!accountCtrl.isPro) {
                               accountCtrl.openSubscriptionSheet();

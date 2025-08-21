@@ -25,41 +25,29 @@ class TodoCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final isFromArchive = type == TodoType.archived;
 
-    void showUndoSnackBar(String message, VoidCallback undoAction) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.info_outline, color: Colors.white),
-              const SizedBox(width: 8),
-              Expanded(child: Text(message)),
-            ],
-          ),
-          duration: const Duration(seconds: 3),
-          action: SnackBarAction(
-            label: 'Undo',
-            onPressed: undoAction,
-            textColor: Colors.yellowAccent,
-          ),
-        ),
-      );
-    }
-
     void handleDeleteOrArchive(bool isDelete) {
       if (isDelete) {
         controller.deleteTodoWithUndo(todo);
         showUndoSnackBar(
-            'Deleted "${todo.title}"', () => controller.undoDelete(todo));
+          context: context,
+          message: 'Deleted "${todo.title}"',
+          undoAction: () => controller.undoDelete(todo),
+        );
       } else {
         if (isFromArchive) {
           controller.unarchiveTodo(todo);
-          showUndoSnackBar('Restored "${todo.title}"',
-              () => controller.archiveTodo(todo.id));
+          showUndoSnackBar(
+            context: context,
+            message: 'Restored "${todo.title}"',
+            undoAction: () => controller.archiveTodo(todo.id),
+          );
         } else {
           controller.archiveTodo(todo.id);
           showUndoSnackBar(
-              'Archived "${todo.title}"', () => controller.unarchiveTodo(todo));
+            context: context,
+            message: 'Archived "${todo.title}"',
+            undoAction: () => controller.unarchiveTodo(todo),
+          );
         }
       }
     }
@@ -109,8 +97,8 @@ class TodoCard extends StatelessWidget {
                     scale: 1.2,
                     child: Checkbox(
                       value: todo.completed,
-                      onChanged: (_) =>
-                          controller.toggleTodoCompletion(todo.id),
+                      onChanged: (_) => controller.toggleTodoCompletion(
+                          todo.id, todo.completed),
                       shape: const CircleBorder(),
                       activeColor: theme.textTheme.titleLarge?.color,
                     ),
@@ -244,7 +232,7 @@ class TodoCard extends StatelessWidget {
               ],
             ),
             onTap: () {
-              controller.toggleTodoCompletion(todo.id);
+              controller.toggleTodoCompletion(todo.id, todo.completed);
             },
             onLongPress: () {
               TodoDetailSheet.show(context, todo);
