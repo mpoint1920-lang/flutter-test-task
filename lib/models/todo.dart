@@ -29,8 +29,16 @@ class Todo {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'completed': completed,
+    };
+  }
+
   @override
   String toString() {
     return 'Todo(id: $id, title: $title, completed: $completed)';
   }
-} 
+}

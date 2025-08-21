@@ -18,6 +18,7 @@ dependencies:
   flutter_svg: ^2.0.13
   shimmer: ^3.0.0
   liquid_pull_to_refresh: ^3.0.1
+  get_storage: ^2.1.1
 
 dev_dependencies:
   flutter_test:

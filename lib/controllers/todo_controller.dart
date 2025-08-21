@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
 import 'package:todo_test_task/models/todo.dart';
+import 'package:todo_test_task/services/storage_service.dart';
 import 'package:todo_test_task/services/todo_service.dart';
 
 class TodoController extends GetxController {
   final TodoService todoService;
   final ScrollController scrollController = ScrollController();
+  final StorageService storageService;
 
-  TodoController({required this.todoService});
+  TodoController({required this.todoService, required this.storageService});
 
   List<Todo> _allTodos = [];
 
@@ -48,26 +50,56 @@ class TodoController extends GetxController {
   }
 
   Future<void> loadTodos({bool isRefresh = false}) async {
-    try {
+    if (isRefresh) {
       isLoading(true);
-      if (isRefresh) {
-        _currentPage = 1;
-        _hasMore = true;
-        todos.clear();
+    }
+
+    // Load from cache first for instant UI
+    final cachedTodos = storageService.getTodos();
+    if (!isRefresh) {
+      if (cachedTodos.isNotEmpty) {
+        _allTodos = cachedTodos;
+        _resetAndLoadFirstPage();
+        isLoading(false);
       }
+    }
+
+    try {
       errorMessage('');
       isSocketError(false);
-      _allTodos = await todoService.fetchTodos();
-      _loadPage();
+      final fetchedTodos = await todoService.fetchTodos();
+      _allTodos = fetchedTodos;
+      if (cachedTodos.isEmpty) {
+        await storageService.saveTodos(_allTodos);
+      } else {
+        _allTodos = _allTodos.map((e) {
+          final index = cachedTodos.indexWhere((a) => a.id == e.id);
+
+          return index == -1
+              ? e
+              : e.copyWith(
+                  id: cachedTodos[index].id,
+                  title: cachedTodos[index].title,
+                  completed: cachedTodos[index].completed,
+                );
+        }).toList();
+      }
+      _resetAndLoadFirstPage();
     } on SocketException {
       isSocketError(true);
       AppSnack.error('No Internet connection. Please check your network.');
     } catch (e) {
-      print('Type if error is ${e}');
       errorMessage(e.toString().replaceFirst("Exception: ", ""));
     } finally {
       isLoading(false);
     }
+  }
+
+  void _resetAndLoadFirstPage() {
+    _currentPage = 1;
+    _hasMore = true;
+    todos.clear();
+    _loadPage();
   }
 
   void loadMoreTodos() {
@@ -91,15 +123,23 @@ class TodoController extends GetxController {
       _hasMore = false;
     }
 
-    final newItems = _allTodos.sublist(startIndex, endIndex);
-    todos.addAll(newItems);
+    if (startIndex < _allTodos.length) {
+      final newItems = _allTodos.sublist(startIndex, endIndex);
+      todos.addAll(newItems);
+    }
   }
 
-  void toggleTodoCompletion(int todoId) {
-    final index = todos.indexWhere((todo) => todo.id == todoId);
-    if (index != -1) {
-      final todo = todos[index];
-      todos[index] = todo.copyWith(completed: !todo.completed);
+  Future<void> toggleTodoCompletion(int todoId) async {
+    final uiIndex = todos.indexWhere((todo) => todo.id == todoId);
+    if (uiIndex != -1) {
+      final todo = todos[uiIndex];
+      todos[uiIndex] = todo.copyWith(completed: !todo.completed);
+
+      final masterIndex = _allTodos.indexWhere((t) => t.id == todoId);
+      if (masterIndex != -1) {
+        _allTodos[masterIndex] = todos[uiIndex];
+        await storageService.saveTodos(_allTodos);
+      }
     }
   }
 }

@@ -32,8 +32,8 @@ final ThemeData lightTheme = ThemeData(
       color: ColorPalettes.lightOnSurface,
     ),
   ),
-  dividerTheme: const DividerThemeData(
-    color: ColorPalettes.lightOnSurface,
+  dividerTheme: DividerThemeData(
+    color: ColorPalettes.lightOnSurface.withValues(alpha: .3),
     thickness: .5,
   ),
   textTheme: TextTheme(
