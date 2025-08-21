@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/controllers/account_controller.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
+import 'package:todo_test_task/models/account.dart';
 import 'package:todo_test_task/models/todo.dart';
 import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/widgets/pro_feature_wrapper.dart';
+import 'package:todo_test_task/widgets/widgets.dart';
 
 class TodoDetailSheet extends StatelessWidget {
   const TodoDetailSheet({super.key, required this.todoId});
@@ -14,6 +18,7 @@ class TodoDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TodoController controller = Get.find<TodoController>();
+    final accountCtrl = Get.find<AccountController>();
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -103,43 +108,9 @@ class TodoDetailSheet extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Deadline Picker
+
                 Row(
                   children: [
-                    Expanded(
-                      child: TextButton.icon(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.red.shade100), // reddish background
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.red.shade800),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate: todo.deadline ?? DateTime.now(),
-                            firstDate:
-                                DateTime.now().add(const Duration(minutes: 1)),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            controller.updateDeadline(todo.id, picked);
-                          }
-                        },
-                        label: Text(
-                          todo.deadline != null
-                              ? 'Deadline: ${todo.deadline!.toLocal().toString().split(' ')[0]}'
-                              : 'Set Deadline',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
                       child: TextButton.icon(
                         style: ButtonStyle(
@@ -184,6 +155,48 @@ class TodoDetailSheet extends StatelessWidget {
                             ),
                           );
                         },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ProFeatureWrapper(
+                        child: TextButton.icon(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.red.shade100), // reddish background
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.red.shade800),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            if (!accountCtrl.isPro) {
+                              accountCtrl.openSubscriptionSheet();
+                              return;
+                            }
+
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: todo.deadline ?? DateTime.now(),
+                              firstDate: DateTime.now()
+                                  .add(const Duration(minutes: 1)),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              controller.updateDeadline(todo.id, picked);
+                            }
+                          },
+                          label: Text(
+                            todo.deadline != null
+                                ? 'Deadline: ${todo.deadline!.toLocal().toString().split(' ')[0]}'
+                                : 'Set Deadline',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ),
                     ),
                   ],

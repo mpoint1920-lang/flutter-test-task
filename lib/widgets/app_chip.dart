@@ -20,7 +20,7 @@ class AppChip extends StatelessWidget {
           onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
-              color: bgColor?.withValues(alpha: 0.3),
+              color: bgColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(

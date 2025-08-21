@@ -24,4 +24,5 @@ class ColorPalettes {
   static const Color disabledColor = Color.fromARGB(255, 185, 187, 189);
 
   static const Color errorColor = Color(0xFFB00020);
+  static const Color premiumColor = Colors.amber;
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:todo_test_task/controllers/account_controller.dart';
 import 'package:todo_test_task/controllers/ui_controller.dart';
+import 'package:todo_test_task/services/storage_service.dart';
 import 'package:todo_test_task/theme/theme.dart';
 import 'routes.dart';
 
@@ -10,6 +12,8 @@ Future<void> main() async {
 
   await GetStorage.init();
   Get.put(UiController());
+  Get.put(StorageService());
+  Get.put(AccountController(storageService: Get.find()));
 
   runApp(const TodoTestApp());
 }

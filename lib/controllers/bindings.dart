@@ -24,7 +24,7 @@ class HomeBinding extends Bindings {
         },
       ),
     );
-    Get.lazyPut<StorageService>(() => StorageService());
+
     Get.lazyPut<TodoService>(() => TodoService(apiService: Get.find()));
     Get.lazyPut<TodoController>(
       () => TodoController(

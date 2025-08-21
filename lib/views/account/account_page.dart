@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo_test_task/controllers/account_controller.dart';
 import 'package:todo_test_task/controllers/todo_controller.dart';
 import 'package:todo_test_task/helpers/ui_helpers.dart';
+import 'package:todo_test_task/models/account.dart';
 import 'package:todo_test_task/routes.dart';
 import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/widgets/app_network_image.dart';
 import 'package:todo_test_task/widgets/widgets.dart';
 
 class AccountPage extends StatelessWidget {
@@ -14,27 +17,27 @@ class AccountPage extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final accountCtrl = Get.find<AccountController>();
     final todoCtrl = Get.find<TodoController>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(
-                'https://avatars.githubusercontent.com/u/88554326?v=4',
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Yeabsera Mekonnen',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ],
-        ),
+        title: Obx(() => Row(
+              children: [
+                CachedImage(
+                  width: 20,
+                  height: 20,
+                  url: accountCtrl.accountInfo.value?.profilePic,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  accountCtrl.accountInfo.value?.name ?? '',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            )),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -64,19 +67,27 @@ class AccountPage extends StatelessWidget {
               },
               trailing: const Icon(Icons.chevron_right),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.star_border_purple500),
-              title: const Text('Membership'),
-              subtitle: const AppChip(
-                title: 'Free',
-                bgColor: ColorPalettes.disabledColor,
-              ),
-              onTap: () {
-                // Open bottomsheet for membership
+            Obx(
+              () {
+                final membership = accountCtrl.accountInfo.value?.membership ??
+                    Membership.free;
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    membership.icon,
+                    color: membership.color,
+                  ),
+                  title: const Text('Membership'),
+                  subtitle: AppChip(
+                    title: membership.label,
+                    bgColor: membership.color,
+                  ),
+                  onTap: () => accountCtrl.openSubscriptionSheet(),
+                  trailing: const Icon(Icons.chevron_right),
+                );
               },
-              trailing: const Icon(Icons.chevron_right),
             ),
+
             const SizedBox(height: 20),
             const Text(
               'Collections',
