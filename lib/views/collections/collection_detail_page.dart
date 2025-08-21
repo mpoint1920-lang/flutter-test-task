@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/controllers/todo_controller.dart';
+
+import 'package:todo_test_task/controllers/controllers.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/theme/theme.dart';
 import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';

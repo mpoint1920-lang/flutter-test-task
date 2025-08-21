@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/controllers/ui_controller.dart';
+
+import 'package:todo_test_task/controllers/controllers.dart';
 import 'package:todo_test_task/views/account/account_page.dart';
-import 'package:todo_test_task/views/collections/search_page.dart';
+import 'package:todo_test_task/views/collections/collections_page.dart';
 import 'package:todo_test_task/views/todos/todo_page.dart';
 
 class HomePage extends GetView<UiController> {

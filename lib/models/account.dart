@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
 
-enum Membership {
-  free,
-  pro,
-}
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/theme/theme.dart';
 
 extension MembershipX on Membership {
   String get label {

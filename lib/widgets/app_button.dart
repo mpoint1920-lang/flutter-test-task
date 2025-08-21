@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
 
-enum AppButtonType { success, error, primary, secondary }
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/theme/theme.dart';
 
 class AppButton extends StatelessWidget {
   final String title;

@@ -59,3 +59,16 @@ extension TodoPriorityExtension on TodoPriority {
     }
   }
 }
+
+enum TodoSort { none, title, priority, completion }
+
+enum AppThemeMode { system, light, dark }
+
+enum SoundType { archive, notify, completed }
+
+enum Membership {
+  free,
+  pro,
+}
+
+enum AppButtonType { success, error, primary, secondary }

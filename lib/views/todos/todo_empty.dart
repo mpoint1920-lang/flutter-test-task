@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
+
+import 'package:todo_test_task/theme/theme.dart';
 
 class TodoEmpty extends StatelessWidget {
   const TodoEmpty({

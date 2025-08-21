@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/services/storage_service.dart';
-import '../models/account.dart';
+
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/models/models.dart';
+import 'package:todo_test_task/services/services.dart';
 
 class AccountController extends GetxController {
   AccountController({required this.storageService});

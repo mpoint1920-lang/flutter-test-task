@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/controllers/todo_controller.dart';
-import 'package:todo_test_task/models/todo.dart';
-import 'package:todo_test_task/common/enums.dart';
+
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/controllers/controllers.dart';
+import 'package:todo_test_task/models/models.dart';
 
 class FindController extends GetxController {
   final TodoController todoController;

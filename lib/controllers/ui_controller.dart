@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/services/storage_service.dart';
 
-enum AppThemeMode { system, light, dark }
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/services/services.dart';
 
 class UiController extends GetxController {
   UiController({required this.storageService});

@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:todo_test_task/common/common.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
-import 'package:todo_test_task/models/todo.dart';
-import 'package:todo_test_task/services/storage_service.dart';
-import 'package:todo_test_task/services/todo_service.dart';
+import 'package:todo_test_task/models/models.dart';
+import 'package:todo_test_task/services/services.dart';
 
 class TodoController extends GetxController {
   final TodoService todoService;
@@ -315,5 +315,3 @@ class TodoController extends GetxController {
     _resetAndLoadFirstPage();
   }
 }
-
-enum TodoSort { none, title, priority, completion }

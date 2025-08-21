@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import 'package:todo_test_task/controllers/bindings.dart';
 import 'package:todo_test_task/views/home/home_page.dart';
 import 'package:todo_test_task/views/home/archived_page.dart';
@@ -12,7 +13,6 @@ class RouteNames {
   static const settings = '/settings';
 }
 
-/// Route configuration
 class AppRoutes {
   static final pages = [
     GetPage(

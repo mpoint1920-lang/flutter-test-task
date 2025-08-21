@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/controllers/account_controller.dart';
-import 'package:todo_test_task/models/account.dart';
+
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/controllers/controllers.dart';
+import 'package:todo_test_task/models/models.dart';
 
 class ProFeatureWrapper extends GetView<AccountController> {
   const ProFeatureWrapper({

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+
 import 'package:todo_test_task/common/common.dart';
-import 'package:todo_test_task/controllers/account_controller.dart';
-import 'package:todo_test_task/controllers/todo_controller.dart';
+import 'package:todo_test_task/controllers/controllers.dart';
 import 'package:todo_test_task/helpers/helpers.dart';
-import 'package:todo_test_task/models/account.dart';
-import 'package:todo_test_task/models/todo.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/models/models.dart';
+import 'package:todo_test_task/theme/theme.dart';
 import 'package:todo_test_task/widgets/pro_feature_wrapper.dart';
-import 'package:todo_test_task/widgets/widgets.dart';
 
 class TodoDetailSheet extends StatelessWidget {
   const TodoDetailSheet({super.key, required this.todoId});

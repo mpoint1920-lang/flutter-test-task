@@ -1,6 +1,6 @@
 import 'package:get_storage/get_storage.dart';
-import '../models/todo.dart';
-import '../models/account.dart';
+
+import 'package:todo_test_task/models/models.dart';
 
 class StorageService {
   final GetStorage _box = GetStorage();

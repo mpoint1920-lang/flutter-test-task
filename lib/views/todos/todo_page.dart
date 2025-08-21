@@ -4,10 +4,8 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:badges/badges.dart' as badges;
 
 import 'package:todo_test_task/common/enums.dart';
-import 'package:todo_test_task/controllers/find_controller.dart';
-import 'package:todo_test_task/controllers/todo_controller.dart';
-import 'package:todo_test_task/models/todo.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
+import 'package:todo_test_task/controllers/controllers.dart';
+import 'package:todo_test_task/models/models.dart';
 import 'package:todo_test_task/views/todos/todo_card.dart';
 import 'package:todo_test_task/views/todos/todo_empty.dart';
 import 'package:todo_test_task/views/todos/todo_shimmer.dart';

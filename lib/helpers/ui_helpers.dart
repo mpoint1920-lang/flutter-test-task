@@ -66,14 +66,6 @@ String getFriendlyDate(DateTime date) {
   return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
 
-/// Shows a customizable SnackBar with an optional leading icon and an undo action.
-///
-/// - [context]: The BuildContext from which to find the ScaffoldMessenger.
-/// - [message]: The primary text message to display.
-/// - [undoAction]: The callback to be executed when the 'Undo' button is pressed.
-/// - [actionIcon]: An optional icon to display at the beginning of the SnackBar.
-/// - [onTap]: An optional callback to make the entire SnackBar tappable.
-/// - [duration]: The duration for which the SnackBar is displayed. Defaults to 3 seconds.
 void showUndoSnackBar({
   required BuildContext context,
   required String message,
@@ -85,7 +77,6 @@ void showUndoSnackBar({
   final scaffoldMessenger = ScaffoldMessenger.of(context);
   final theme = Theme.of(context);
 
-  // Hide any currently displayed snackbar to avoid overlap.
   scaffoldMessenger.hideCurrentSnackBar();
 
   scaffoldMessenger.showSnackBar(

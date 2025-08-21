@@ -1,5 +1,5 @@
-import 'package:todo_test_task/models/todo.dart';
-import 'package:todo_test_task/services/api_service.dart';
+import 'package:todo_test_task/models/models.dart';
+import 'package:todo_test_task/services/services.dart';
 
 class TodoService {
   final ApiService _apiService;

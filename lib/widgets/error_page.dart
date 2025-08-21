@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:todo_test_task/theme/color_palettes.dart';
+
+import 'package:todo_test_task/common/common.dart';
+import 'package:todo_test_task/theme/theme.dart';
 import 'package:todo_test_task/widgets/app_button.dart';
 
 class ErrorPage extends StatelessWidget {
