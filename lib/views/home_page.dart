@@ -53,11 +53,7 @@ class HomePage extends StatelessWidget {
 
         // TODO: Replace this static placeholder list with real data from controller
         // Use controller.todos instead of the static list below
-        final List<Todo> placeholderTodos = [
-          Todo(id: 1, title: 'Learn Flutter', completed: false),
-          Todo(id: 2, title: 'Complete this test task', completed: true),
-          Todo(id: 3, title: 'Build amazing apps', completed: false),
-        ];
+        final List<Todo> placeholderTodos = controller.todos;
 
         if (placeholderTodos.isEmpty) {
           return const Center(
@@ -79,17 +75,15 @@ class HomePage extends StatelessWidget {
                 title: Text(
                   todo.title,
                   style: TextStyle(
-                    decoration: todo.completed 
-                        ? TextDecoration.lineThrough 
-                        : null,
-                    color: todo.completed 
-                        ? Colors.grey 
-                        : null,
+                    decoration:
+                        todo.completed ? TextDecoration.lineThrough : null,
+                    color: todo.completed ? Colors.grey : null,
                   ),
                 ),
                 trailing: Checkbox(
                   value: todo.completed,
                   onChanged: (bool? value) {
+                    controller.toggleTodoCompletion(todo.id);
                     // TODO: Call controller.toggleTodoCompletion(todo.id) here
                   },
                 ),
@@ -100,6 +94,7 @@ class HomePage extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          controller.loadTodos();
           // TODO: Call controller.loadTodos() to refresh the data
         },
         tooltip: 'Refresh',
@@ -107,4 +102,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-} 
+}
