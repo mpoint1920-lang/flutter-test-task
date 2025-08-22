@@ -14,7 +14,7 @@
 `The project compiles and runs, but originally had incomplete parts that needed further implementation. I expanded it into a realistic production-ready example app.`
 
 **🎯 Goal**
-`I wanted to showcase how a real-life, complex, scalable and production-ready app could be built
+`Showcase how a real-life, complex, scalable and production-ready app could be built
 with a very minimal scopes of requirements`
 
 ---
@@ -30,12 +30,12 @@ with a very minimal scopes of requirements`
 <p align="center">
   <img src="assets/demo/cal.png" alt="Todo List" width="200"/>
   <img src="assets/demo/dark_deadline.png" alt="Todo List" width="200"/>
-   <img src="assets/demo/search_todo.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/search_todo.png" alt="Todo List" width="200"/>
 </p>
 
 <p align="center">
-   <img src="assets/demo/collection.png" alt="Todo List" width="200"/>
-   <img src="assets/demo/dark_add_collections.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/collection.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/dark_add_collections.png" alt="Todo List" width="200"/>
   <img src="assets/demo/dark_settings.png" alt="Todo List" width="200"/>
 </p>
 
@@ -46,7 +46,7 @@ with a very minimal scopes of requirements`
 
 <p align="center">
   <img src="assets/demo/dark_land_collection.png" alt="Todo List" height="200"/>
-<img src="assets/demo/large_todo.png" alt="Todo List" height="200"/>
+  <img src="assets/demo/large_todo.png" alt="Todo List" height="200"/>
   <img src="assets/demo/dark_no_archive.png" alt="Todo List" height="200"/>
 </p>
 
