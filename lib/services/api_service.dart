@@ -1,22 +1,73 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/todo.dart';
 
 class ApiService {
   static const String baseUrl = 'https://jsonplaceholder.typicode.com';
+  static const Duration timeoutDuration = Duration(seconds: 30);
 
-  // TODO: Implement this function to fetch todos from the API
-  // Use the endpoint: https://jsonplaceholder.typicode.com/todos
-  // Parse the JSON response and return a List<Todo>
-  // Handle any potential errors and throw appropriate exceptions
   Future<List<Todo>> fetchTodos() async {
-    // TODO: Add implementation here
-    // 1. Make HTTP GET request to $baseUrl/todos
-    // 2. Parse the JSON response
-    // 3. Convert each JSON object to Todo using Todo.fromJson
-    // 4. Return the list of todos
-    // 5. Handle errors appropriately
-    
-    throw UnimplementedError('fetchTodos() method needs to be implemented');
+    final Uri uri = Uri.parse('$baseUrl/todos');
+
+    try {
+      final response = await http.get(uri).timeout(timeoutDuration);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        return jsonData.map((json) => Todo.fromJson(json)).toList();
+      } else {
+        throw HttpException(
+          'Failed to load todos. Status code: ${response.statusCode}',
+          statusCode: response.statusCode,
+        );
+      }
+    } on http.ClientException catch (e) {
+      throw NetworkException('Network error: ${e.message}');
+    } on TimeoutException {
+      throw NetworkException('Request timed out. Please check your connection.');
+    } on FormatException {
+      throw DataParsingException('Invalid JSON format received from server.');
+    } catch (e) {
+      throw UnknownException('An unexpected error occurred: $e');
+    }
   }
-} 
+}
+
+// Custom exception classes for better error handling
+class HttpException implements Exception {
+  final String message;
+  final int? statusCode;
+
+  HttpException(this.message, {this.statusCode});
+
+  @override
+  String toString() => 'HttpException: $message';
+}
+
+class NetworkException implements Exception {
+  final String message;
+
+  NetworkException(this.message);
+
+  @override
+  String toString() => 'NetworkException: $message';
+}
+
+class DataParsingException implements Exception {
+  final String message;
+
+  DataParsingException(this.message);
+
+  @override
+  String toString() => 'DataParsingException: $message';
+}
+
+class UnknownException implements Exception {
+  final String message;
+
+  UnknownException(this.message);
+
+  @override
+  String toString() => 'UnknownException: $message';
+}
