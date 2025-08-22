@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/todo_controller.dart';
@@ -12,13 +14,35 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Todo Test Task'),
+        title: const Text(
+          'To-Do List',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return ListView.builder(
+            itemCount: 14,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Container(
+                  height: 24,
+                  width: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                title: Container(
+                  height: 20,
+                  width: double.infinity,
+                  color: Colors.white,
+                ),
+              );
+            },
           );
         }
 
@@ -27,8 +51,10 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.error_outline,
+                Icon(
+                  Platform.isIOS
+                      ? CupertinoIcons.exclamationmark_circle
+                      : Icons.error_outline,
                   size: 64,
                   color: Colors.red,
                 ),
@@ -43,6 +69,7 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     controller.clearError();
                     // TODO: Call loadTodos() to retry loading data
+                    controller.loadTodos();
                   },
                   child: const Text('Retry'),
                 ),
@@ -53,13 +80,9 @@ class HomePage extends StatelessWidget {
 
         // TODO: Replace this static placeholder list with real data from controller
         // Use controller.todos instead of the static list below
-        final List<Todo> placeholderTodos = [
-          Todo(id: 1, title: 'Learn Flutter', completed: false),
-          Todo(id: 2, title: 'Complete this test task', completed: true),
-          Todo(id: 3, title: 'Build amazing apps', completed: false),
-        ];
+        final List<Todo> todos = controller.todos;
 
-        if (placeholderTodos.isEmpty) {
+        if (todos.isEmpty) {
           return const Center(
             child: Text(
               'No todos found',
@@ -68,43 +91,42 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: placeholderTodos.length,
+        return ListView.separated(
+          itemCount: todos.length,
           itemBuilder: (context, index) {
-            final todo = placeholderTodos[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                title: Text(
-                  todo.title,
-                  style: TextStyle(
-                    decoration: todo.completed 
-                        ? TextDecoration.lineThrough 
-                        : null,
-                    color: todo.completed 
-                        ? Colors.grey 
-                        : null,
-                  ),
+            final todo = todos[index];
+            return ListTile(
+              leading: Checkbox(
+                activeColor: Colors.blue,
+                value: todo.completed,
+                onChanged: (bool? value) {
+                  // TODO: Call controller.toggleTodoCompletion(todo.id) here
+                  controller.toggleTodoCompletion(todo.id);
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                trailing: Checkbox(
-                  value: todo.completed,
-                  onChanged: (bool? value) {
-                    // TODO: Call controller.toggleTodoCompletion(todo.id) here
-                  },
-                ),
+              ),
+              title: Text(
+                todo.title,
               ),
             );
           },
+          separatorBuilder: (context, index) => const Divider(
+            height: 1,
+            indent: 16,
+            endIndent: 16,
+          ),
         );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Call controller.loadTodos() to refresh the data
+          controller.loadTodos();
         },
         tooltip: 'Refresh',
-        child: const Icon(Icons.refresh),
+        child: Icon(Platform.isIOS ? CupertinoIcons.refresh : Icons.refresh),
       ),
     );
   }
-} 
+}
