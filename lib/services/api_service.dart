@@ -27,17 +27,21 @@ final url = Uri.parse('$baseUrl/todos');
   try{
 
     final response = await http.get(url);
+
     if(response.statusCode == 200){
 
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map( (jsonItem) => Todo.fromJson(jsonItem)).toList();
-    } else {
-       throw Exception('Failed to load todos, Status code ${response.statusCode}');
-
+    } else if (response.statusCode == 403){
+       
+  return [];
+    } else{
+     throw Exception('Failed to load todos, Status code ${response.statusCode}');
     }
   } catch(e){
-    throw Exception('Error fetch todos: $e');
+    //throw Exception('Error fetch todos: $e');
+    return[];
   }
 
     
@@ -47,20 +51,10 @@ final url = Uri.parse('$baseUrl/todos');
  
 
 // jsonplaceholder doesn't persist data, so I  create my own Todo but when i referesh it it did't save like the data from the API
+  
   Future<Todo> addTodo(String title) async {
-    final url = Uri.parse('$baseUrl/todos');
+  
     final box = GetStorage();
-
-  try {
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json; charset=UTF-8'},
-      body: json.encode({
-        'title': title,
-        'completed': false,
-        'userId': 1,
-      }),
-    );
 
     final newTodo = Todo(
     id: DateTime.now().millisecondsSinceEpoch,
@@ -77,19 +71,7 @@ final url = Uri.parse('$baseUrl/todos');
 
   return newTodo;
 
-    // if (response.statusCode == 201) {
-      
-    //   return Todo(
-    //     id: DateTime.now().millisecondsSinceEpoch, 
-    //     title: title,
-    //     completed: false,
-    //   );
-    // } else {
-    //   throw Exception('Failed to add todo. Status code: ${response.statusCode}');
-    // }
-  } catch (e) {
-    throw Exception('Error adding todo: $e');
-  }
+ 
 }
 
 

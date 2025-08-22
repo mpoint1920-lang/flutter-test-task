@@ -33,7 +33,9 @@ class TodoController extends GetxController {
 
       final fetchTodos = await _apiService.fetchTodos();
 
- final box = GetStorage();
+    //todos from GetStroge
+
+     final box = GetStorage();
     final stored = box.read('localTodos') ?? [];
     final localTodos = stored.map((json) => Todo.fromJson(json)).toList();
 
