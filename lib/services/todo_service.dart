@@ -29,6 +29,16 @@ class TodoService {
     }
   }
 
+  Future<void> updateTodo(Todo todo) async {
+    try {
+      // POST & PUT
+      // await _apiService.post('$_todoRoute/${todo.id}', todo.toJson());
+      // await _apiService.put('$_todoRoute/${todo.id}', {'completed': todo.completed});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> deleteTodo(int id) async {
     try {
       await _apiService.delete('$_todoRoute/$id');

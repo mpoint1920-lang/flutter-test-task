@@ -128,8 +128,7 @@ class TodoController extends GetxController {
     _deleteTimers[todo.id]?.cancel();
     _deleteTimers[todo.id] = Timer(const Duration(seconds: 4), () async {
       try {
-        // The dummy API doesn't support DELETE, so we simulate it.
-        // await todoService.deleteTodo(todo.id);
+        await todoService.deleteTodo(todo.id);
         _deletedTodos.remove(todo);
         _deleteTimers.remove(todo.id);
       } catch (e) {
@@ -228,15 +227,23 @@ class TodoController extends GetxController {
     _resetAndLoadFirstPage();
   }
 
-  void _updateTodoById(int todoId, Todo Function(Todo todo) updater) {
-    final index = _allTodos.indexWhere((t) => t.id == todoId);
-    if (index != -1) {
-      _allTodos[index] = updater(_allTodos[index]);
-      _persistAllData();
-      final pagedIndex = todos.indexWhere((t) => t.id == todoId);
-      if (pagedIndex != -1) {
-        todos[pagedIndex] = _allTodos[index];
+  Future<void> _updateTodoById(
+    int todoId,
+    Todo Function(Todo todo) updater,
+  ) async {
+    try {
+      final index = _allTodos.indexWhere((t) => t.id == todoId);
+      if (index != -1) {
+        _allTodos[index] = updater(_allTodos[index]);
+        _persistAllData();
+        final pagedIndex = todos.indexWhere((t) => t.id == todoId);
+        if (pagedIndex != -1) {
+          await todoService.updateTodo(todos[pagedIndex]);
+          todos[pagedIndex] = _allTodos[index];
+        }
       }
+    } catch (e) {
+      AppSnack.error(e.toString());
     }
   }
 
