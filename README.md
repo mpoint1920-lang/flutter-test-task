@@ -8,7 +8,7 @@ Fetch and display a list of todos from the [JSONPlaceholder API](https://jsonpla
 
 ## Sample UI
 
-![Sample UI](assets/sample_ui.png)
+
 ![Sample UI](assets/add.jpg)
 ![Sample UI](assets/error%20.jpg)
 ![Sample UI](assets/list.jpg)
