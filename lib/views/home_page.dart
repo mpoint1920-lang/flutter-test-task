@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,11 +5,15 @@ import '../controllers/todo_controller.dart';
 import '../models/todo.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+
+  final TodoController controller = Get.put(TodoController());
 
   @override
   Widget build(BuildContext context) {
-    final TodoController controller = Get.put(TodoController());
+    final TargetPlatform platform = Theme.of(context).platform;
+    final bool isApplePlatform =
+        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,32 +51,39 @@ class HomePage extends StatelessWidget {
 
         if (controller.errorMessage.isNotEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Platform.isIOS
-                      ? CupertinoIcons.exclamationmark_circle
-                      : Icons.error_outline,
-                  size: 64,
-                  color: Colors.red,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Error: ${controller.errorMessage.value}',
-                  style: const TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    controller.clearError();
-                    // TODO: Call loadTodos() to retry loading data
-                    controller.loadTodos();
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.cloud_off,
+                    color: Colors.grey,
+                    size: 60,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Oops, something went wrong',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Please check your internet connection and try again.',
+                    // controller.errorMessage.value,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      controller.loadTodos();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Try Again'),
+                  ),
+                ],
+              ),
             ),
           );
         }
@@ -109,14 +119,17 @@ class HomePage extends StatelessWidget {
               ),
               title: Text(
                 todo.title,
+                style: TextStyle(
+                  decoration: todo.completed
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
+                  color: todo.completed ? Colors.grey : Colors.black,
+                ),
               ),
             );
           },
-          separatorBuilder: (context, index) => const Divider(
-            height: 1,
-            indent: 16,
-            endIndent: 16,
-          ),
+          separatorBuilder: (context, index) =>
+              const Divider(height: 1, indent: 16, endIndent: 16),
         );
       }),
       floatingActionButton: FloatingActionButton(
@@ -125,7 +138,7 @@ class HomePage extends StatelessWidget {
           controller.loadTodos();
         },
         tooltip: 'Refresh',
-        child: Icon(Platform.isIOS ? CupertinoIcons.refresh : Icons.refresh),
+        child: Icon(isApplePlatform ? CupertinoIcons.refresh : Icons.refresh),
       ),
     );
   }
