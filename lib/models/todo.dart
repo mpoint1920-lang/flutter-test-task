@@ -17,6 +17,14 @@ class Todo {
     );
   }
 
+  Map<String, dynamic> toJson(){
+    return {
+      'id': id,
+      'title': title,
+      'completed': completed
+    };
+  }
+
   Todo copyWith({
     int? id,
     String? title,
@@ -28,6 +36,7 @@ class Todo {
       completed: completed ?? this.completed,
     );
   }
+  
 
   @override
   String toString() {

@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:js_interop';
 import 'package:http/http.dart' as http;
 import '../models/todo.dart';
-
+import 'package:get_storage/get_storage.dart';
 class ApiService {
   static const String baseUrl = 'https://jsonplaceholder.typicode.com';
-   final url = Uri.parse('$baseUrl/todos');
+   
 
 
   // TODO: Implement this function to fetch todos from the API
@@ -20,6 +21,7 @@ class ApiService {
     // 4. Return the list of todos
     // 5. Handle errors appropriately
 
+final url = Uri.parse('$baseUrl/todos');
  
 
   try{
@@ -35,7 +37,7 @@ class ApiService {
 
     }
   } catch(e){
-    throw Exception('Error featch todos: $e');
+    throw Exception('Error fetch todos: $e');
   }
 
     
@@ -44,8 +46,10 @@ class ApiService {
 
  
 
-// jsonplaceholder doesn't persist data, so I  create my own Todo but when i referesh it it did't save like the data from the API 
+// jsonplaceholder doesn't persist data, so I  create my own Todo but when i referesh it it did't save like the data from the API
   Future<Todo> addTodo(String title) async {
+    final url = Uri.parse('$baseUrl/todos');
+    final box = GetStorage();
 
   try {
     final response = await http.post(
@@ -58,16 +62,31 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode == 201) {
+    final newTodo = Todo(
+    id: DateTime.now().millisecondsSinceEpoch,
+      title: title,
+      completed: false
+
+    );
+
+
+
+     List storedTodos = box.read('localTodos') ?? [];
+   storedTodos.insert(0, newTodo.toJson());
+  await box.write('localTodos', storedTodos);
+
+  return newTodo;
+
+    // if (response.statusCode == 201) {
       
-      return Todo(
-        id: DateTime.now().millisecondsSinceEpoch, 
-        title: title,
-        completed: false,
-      );
-    } else {
-      throw Exception('Failed to add todo. Status code: ${response.statusCode}');
-    }
+    //   return Todo(
+    //     id: DateTime.now().millisecondsSinceEpoch, 
+    //     title: title,
+    //     completed: false,
+    //   );
+    // } else {
+    //   throw Exception('Failed to add todo. Status code: ${response.statusCode}');
+    // }
   } catch (e) {
     throw Exception('Error adding todo: $e');
   }

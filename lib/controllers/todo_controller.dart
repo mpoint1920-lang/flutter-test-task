@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../models/todo.dart';
 import '../services/api_service.dart';
+import 'package:get_storage/get_storage.dart';
 
 class TodoController extends GetxController {
 
@@ -31,7 +32,13 @@ class TodoController extends GetxController {
       errorMessage.value = '';
 
       final fetchTodos = await _apiService.fetchTodos();
-      todos.assignAll(fetchTodos);
+
+ final box = GetStorage();
+    final stored = box.read('localTodos') ?? [];
+    final localTodos = stored.map((json) => Todo.fromJson(json)).toList();
+
+
+      todos.assignAll([...localTodos, ...fetchTodos]);
     } catch(e){
       errorMessage.value = 'Failed to load todos: $e';
     } finally{
@@ -52,14 +59,13 @@ class TodoController extends GetxController {
         todos[index] = updatedTodo;
        }
   }
-
   Future<void> addTodo(String title) async {
   try {
     isLoading.value = true;
     errorMessage.value = '';
 
     final newTodo = await _apiService.addTodo(title);
-    todos.insert(0, newTodo); 
+    todos.insert(0, newTodo); // add at the top of the list
   } catch (e) {
     errorMessage.value = 'Failed to add todo: $e';
   } finally {

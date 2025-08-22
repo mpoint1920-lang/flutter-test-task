@@ -1,23 +1,23 @@
-// lib/themes.dart
+
 import 'package:flutter/material.dart';
 
 class Themes {
   static final light = ThemeData(
     brightness: Brightness.light,
-    primarySwatch: Colors.blue,
+    primarySwatch: Colors.lightGreen,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       foregroundColor: Colors.white,
     ),
   );
 
   static final dark = ThemeData(
     brightness: Brightness.dark,
-    primarySwatch: Colors.deepPurple,
+    primarySwatch: Colors.lightGreen,
     scaffoldBackgroundColor: Colors.black,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       foregroundColor: Colors.white,
     ),
   );

@@ -85,7 +85,7 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Error: ${controller.errorMessage.value}',
+                  ' ${controller.errorMessage}',
                   style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
@@ -144,6 +144,7 @@ class HomePage extends StatelessWidget {
                   value: todo.completed,
                   onChanged: (bool? value) {
                     // TODO: Call controller.toggleTodoCompletion(todo.id) here
+                    
                     controller.toggleTodoCompletion(todo.id);
                   },
                 ),
@@ -162,7 +163,7 @@ floatingActionButton:
  
  icon: Icons.add,
  activeIcon: Icons.close,
- backgroundColor: Colors.blue,
+// backgroundColor: Colors.blue,
  overlayColor: Colors.black12,
  overlayOpacity: 0.4,
 children: [
