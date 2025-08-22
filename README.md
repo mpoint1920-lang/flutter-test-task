@@ -5,8 +5,7 @@
 <h1 align="center">Typicode Todo</h1>
 
 <p align="center">
-This project fetches and displays a list of todos from the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/todos).
-
+  This project fetches and displays a list of TODO items from the <a href="https://jsonplaceholder.typicode.com/todos" target="_blank">JSONPlaceholder API</a>.
 </p>
 
 ---
@@ -29,9 +28,15 @@ with a very minimal scopes of requirements`
 </p>
 
 <p align="center">
+  <img src="assets/demo/cal.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/dark_deadline.png" alt="Todo List" width="200"/>
    <img src="assets/demo/search_todo.png" alt="Todo List" width="200"/>
-   <img src="assets/demo/dark_add_collections.png" alt="Todo List" width="200"/>
+</p>
+
+<p align="center">
    <img src="assets/demo/collection.png" alt="Todo List" width="200"/>
+   <img src="assets/demo/dark_add_collections.png" alt="Todo List" width="200"/>
+  <img src="assets/demo/dark_settings.png" alt="Todo List" width="200"/>
 </p>
 
 <p align="center">
