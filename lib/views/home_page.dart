@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/todo_controller.dart';
 import '../models/todo.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import '../theme/theme_service.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,7 +12,7 @@ class HomePage extends StatelessWidget {
   void _showAddTodoDialog( TodoController controller) {
   final TextEditingController textController = TextEditingController();
 
- Get.dialog(
+   Get.dialog(
      AlertDialog(
         title: const Text('Add New Todo'),
         content: TextField(
@@ -45,6 +46,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TodoController controller = Get.put(TodoController());
+    final themeServices = ThemeService();
+    
 
     return Scaffold (
       appBar: AppBar(
@@ -55,6 +58,13 @@ class HomePage extends StatelessWidget {
         style: TextStyle( 
           fontWeight: FontWeight.bold,
         ),),)
+        ,
+        actions: [
+          IconButton(onPressed: () {
+            themeServices.switchTheme();
+          } 
+          , icon: Icon(Icons.brightness_6))
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
